@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,24 +86,20 @@
             }
         };
 
-        // Pre-warm the internal voice system
         if ('speechSynthesis' in window) {
             window.speechSynthesis.getVoices();
         }
 
         function speakLocal(textToSpeak) {
             if ('speechSynthesis' in window) {
-                // Cancel any current speech instantly so taps feel crisp
                 window.speechSynthesis.cancel();
                 
                 const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                utterance.lang = 'tl-PH'; // Set language to Filipino (Tagalog)
-                utterance.rate = 0.85;    // Slighly slower pace for crystal-clear learning
+                utterance.lang = 'tl-PH'; 
+                utterance.rate = 0.85;    
                 utterance.pitch = 1.0;
                 
                 window.speechSynthesis.speak(utterance);
-            } else {
-                console.log("Speech engine not supported on this device.");
             }
         }
 
@@ -110,16 +107,13 @@
             const pack = DATA_PACKAGES[packageId];
             if (!pack) return;
 
-            // Swap Screens
             document.getElementById('onboarding-screen').classList.add('hidden');
             document.getElementById('lesson-screen').classList.remove('hidden');
 
-            // Load Lesson & Phonetics Data
             const currentLesson = pack.lessons[0];
             document.getElementById('english-frame').innerText = `"${currentLesson.english}" (${currentLesson.verse})`;
             document.getElementById('phonetic-frame').innerText = currentLesson.phonetic;
 
-            // Build Interactive Cards
             const container = document.getElementById('word-columns-container');
             container.innerHTML = ''; 
 
@@ -132,7 +126,6 @@
                     <div class="text-xs text-gray-400 border-t border-gray-700 mt-1 pt-1">${item.translation}</div>
                 `;
 
-                // Fire the internal speech synthesizer on tap
                 card.onclick = () => {
                     speakLocal(item.word);
                 };
@@ -140,7 +133,6 @@
                 container.appendChild(card);
             });
 
-            // Update Header Badge
             document.getElementById('counter-badge').innerText = pack.title;
             document.getElementById('counter-badge').className = "bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-600 shadow-inner";
         }
