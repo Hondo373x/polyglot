@@ -2,48 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Polyglot Segmented</title>
+    <title>Polyglot Trainer</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-900 text-white p-6">
-    <div id="onboarding" class="text-center p-10 bg-gray-800 rounded-xl">
-        <button onclick="startApp()" class="px-8 py-4 bg-green-600 rounded-lg font-bold">Load Training Elements</button>
-    </div>
-
-    <div id="app" class="hidden max-w-lg mx-auto bg-gray-800 p-6 rounded-xl space-y-4">
-        <h2 id="verse-title" class="text-xl font-bold text-green-400"></h2>
-        <div class="p-4 bg-gray-950 rounded-lg border border-gray-700">
-            <p id="eng-text" class="text-sm italic text-gray-400 mb-2"></p>
-            <p id="tl-text" class="text-2xl font-black text-white"></p>
-            <p id="pho-text" class="text-xs text-amber-500 font-mono mt-2"></p>
+    <div id="ui" class="max-w-lg mx-auto bg-gray-800 p-6 rounded-xl space-y-4">
+        <h2 id="verse-title" class="text-green-400 font-bold">Press Start</h2>
+        <div class="p-4 bg-gray-950 rounded-lg">
+            <p id="eng-text" class="text-sm italic text-gray-400"></p>
+            <p id="tl-text" class="text-2xl font-black my-2"></p>
+            <p id="pho-text" class="text-xs text-amber-500 font-mono"></p>
         </div>
-        <button onclick="runAudio()" class="w-full py-4 bg-green-700 rounded-lg font-bold">🔊 Speak Phrase</button>
-        <button onclick="nextSegment()" class="w-full py-3 bg-blue-900 rounded-lg font-bold">Next Segment ➔</button>
+        <button id="btn-audio" onclick="listen()" class="w-full py-4 bg-green-600 rounded-lg font-bold">🎙️ Speak Phrase</button>
+        <p id="feedback" class="text-center font-bold text-sm"></p>
+        <button onclick="next()" class="w-full py-2 bg-blue-900 rounded-lg">Next Segment</button>
     </div>
 
     <script>
-        // Data broken into bite-sized segments
-        const SEGMENTS = [
-            { v: "Prov 3:5 (1/4)", eng: "Trust in the Lord", tl: "Magtiwala ka", pho: "Mag-ti-wala ka" },
-            { v: "Prov 3:5 (2/4)", eng: "with all your heart", tl: "sa Panginoon", pho: "sa Pa-ngi-no-on" },
-            { v: "Prov 3:5 (3/4)", eng: "and lean not", tl: "nang buong puso mo", pho: "nang bu-ong pu-so mo" },
-            { v: "Prov 3:5 (4/4)", eng: "on your own understanding", tl: "at huwag kang manalig", pho: "at hoo-wag kahng mah-nah-lig" }
+        const DATA = [
+            { v: "1/4", eng: "Trust in the Lord", tl: "Magtiwala ka", pho: "Mag-ti-wala ka" },
+            { v: "2/4", eng: "with all your heart", tl: "sa Panginoon", pho: "sa Pa-ngi-no-on" },
+            { v: "3/4", eng: "and lean not", tl: "nang buong puso", pho: "nang bu-ong pu-so" },
+            { v: "4/4", eng: "on your own understanding", tl: "huwag kang manalig", pho: "hoo-wag kahng mah-nah-lig" }
         ];
         let idx = 0;
+        const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recog.lang = 'tl-PH';
 
-        function startApp() { document.getElementById('onboarding').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); updateUI(); }
-        function updateUI() {
-            document.getElementById('verse-title').innerText = SEGMENTS[idx].v;
-            document.getElementById('eng-text').innerText = SEGMENTS[idx].eng;
-            document.getElementById('tl-text').innerText = SEGMENTS[idx].tl;
-            document.getElementById('pho-text').innerText = SEGMENTS[idx].pho;
+        function update() {
+            document.getElementById('verse-title').innerText = "Segment " + DATA[idx].v;
+            document.getElementById('eng-text').innerText = DATA[idx].eng;
+            document.getElementById('tl-text').innerText = DATA[idx].tl;
+            document.getElementById('pho-text').innerText = DATA[idx].pho;
+            document.getElementById('feedback').innerText = "";
         }
-        function runAudio() {
-            const msg = new SpeechSynthesisUtterance(SEGMENTS[idx].tl);
-            msg.lang = 'tl-PH';
-            window.speechSynthesis.speak(msg);
+
+        function listen() {
+            document.getElementById('btn-audio').innerText = "Listening...";
+            recog.start();
         }
-        function nextSegment() { idx = (idx + 1) % SEGMENTS.length; updateUI(); }
+
+        recog.onresult = (e) => {
+            let heard = e.results[0][0].transcript.toLowerCase();
+            let target = DATA[idx].tl.toLowerCase();
+            document.getElementById('btn-audio').innerText = "🎙️ Speak Phrase";
+            if (heard.includes(target) || target.includes(heard)) {
+                document.getElementById('feedback').className = "text-green-400 text-center font-bold";
+                document.getElementById('feedback').innerText = "Correct: " + heard;
+            } else {
+                document.getElementById('feedback').className = "text-red-400 text-center font-bold";
+                document.getElementById('feedback').innerText = "Try again! Heard: " + heard;
+            }
+        };
+
+        function next() { idx = (idx + 1) % DATA.length; update(); }
+        update();
     </script>
 </body>
 </html>
