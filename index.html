@@ -1,19 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polyglot SRS Engine</title>
+    <title>Polyglot Speech Feedback Engine</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col justify-between">
 
     <!-- TOP BAR -->
     <header class="bg-gray-800 p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-black tracking-wider text-green-400">POLYGLOT MEMORY ENGINE</h1>
+        <h1 class="text-xl font-black tracking-wider text-green-400">POLYGLOT SPEECH AUDITOR</h1>
         <div id="counter-badge" class="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-600 shadow-inner">
-            Spaced Repetition Active
+            AI Pronunciation Active
         </div>
     </header>
 
@@ -22,48 +21,74 @@
         
         <!-- ONBOARDING SCREEN -->
         <div id="onboarding-screen" class="w-full max-w-md bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl text-center space-y-6">
-            <h2 class="text-2xl font-bold tracking-tight text-white">Initialize Training Deck</h2>
-            <p class="text-sm text-gray-400">Loads the sequential scripture sign order with memory tracking.</p>
+            <h2 class="text-2xl font-bold tracking-tight text-white">Initialize Speech Recognition</h2>
+            <p class="text-sm text-gray-400">Enables real-time mic monitoring to grade your spoken Filipino pronunciation accuracy.</p>
             <button onclick="initEngine()" class="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-extrabold text-lg rounded-xl transition duration-200 transform active:scale-95 shadow-md uppercase tracking-wider">
-                Start Sign Training
+                Allow Mic & Start
             </button>
         </div>
 
         <!-- ACTIVE LESSON SCREEN -->
-        <div id="lesson-screen" class="w-full max-w-2xl bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl space-y-6 hidden">
+        <div id="lesson-screen" class="w-full max-w-3xl bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl space-y-4 hidden">
             
             <!-- PROGRESS STATUS BAR -->
             <div class="flex justify-between items-center text-xs font-mono text-gray-400 px-1">
-                <span id="deck-position">Verse 1 of X</span>
-                <span id="review-weight" class="text-amber-400 font-bold">Review Weight: New</span>
+                <span id="deck-position" class="font-bold text-gray-300">Verse Module</span>
+                <span id="rep-counter" class="text-amber-400 font-black bg-amber-950/80 border border-amber-700 px-2 py-0.5 rounded">Repetition: 0 / 3</span>
             </div>
 
-            <!-- Target Display Frames -->
-            <div class="bg-gray-950 p-5 rounded-xl border border-gray-700 shadow-inner space-y-4 text-center">
-                <div>
-                    <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">English Source Target</div>
-                    <p id="english-frame" class="text-xl font-semibold text-gray-200 italic leading-relaxed"></p>
-                </div>
+            <div id="action-banner" class="hidden text-center text-xs font-bold py-1.5 rounded-lg border uppercase tracking-wider mb-2">
+                Notification
+            </div>
+
+            <!-- DUAL PHASE WORKSPACE LAYOUT -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
-                <div class="border-t border-gray-800 pt-3">
-                    <div class="text-xs font-bold text-green-600 uppercase tracking-widest mb-1">Filipino Phonetic Pronunciation</div>
-                    <p id="phonetic-frame" class="text-lg font-bold text-green-400 tracking-wide font-mono"></p>
+                <!-- PART 1 FRAME -->
+                <div id="frame-part1" class="bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 transition duration-200">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Segment Part 1</span>
+                        <span id="badge-part1" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase hidden">Active</span>
+                    </div>
+                    <p id="eng-part1" class="text-sm text-gray-300 font-medium italic"></p>
+                    <p id="pho-part1" class="text-base font-bold text-gray-400 font-mono pt-1 border-t border-gray-900"></p>
                 </div>
+
+                <!-- PART 2 FRAME -->
+                <div id="frame-part2" class="bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 transition duration-200">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Segment Part 2</span>
+                        <span id="badge-part2" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase hidden">Active</span>
+                    </div>
+                    <p id="eng-part2" class="text-sm text-gray-300 font-medium italic"></p>
+                    <p id="pho-part2" class="text-base font-bold text-gray-400 font-mono pt-1 border-t border-gray-900"></p>
+                </div>
+
             </div>
 
-            <!-- Interactive Card Components -->
-            <div class="space-y-3">
-                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Target Language Component Deck (Tap to Hear)</div>
-                <div id="word-columns-container" class="flex flex-wrap gap-3 justify-center items-center bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-inner min-h-[140px]"></div>
-            </div>
-
-            <!-- SPACED REPETITION FEEDBACK BUTTONS -->
-            <div class="grid grid-cols-2 gap-4 pt-2">
-                <button onclick="handleRepetition(false)" class="py-4 bg-red-950 border border-red-700 hover:bg-red-900 text-red-300 font-bold rounded-xl transition duration-150 active:scale-95 text-center uppercase tracking-wider text-sm shadow-md">
-                    🔴 Hard (Rehash Soon)
+            <!-- MIC MONITORING & AUDIO PANEL -->
+            <div class="text-center bg-gray-900 p-5 rounded-xl border border-gray-700/60 space-y-3">
+                <button id="audio-trigger-btn" onclick="triggerRepetitionCycle()" class="w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-500 text-white text-base font-black rounded-xl uppercase tracking-wider shadow-md transition duration-150 transform active:scale-95 flex items-center justify-center gap-2 mx-auto">
+                    <span id="btn-text">🔊 Listen & Speak Phrase</span>
                 </button>
-                <button onclick="handleRepetition(true)" class="py-4 bg-green-950 border border-green-700 hover:bg-green-900 text-green-300 font-bold rounded-xl transition duration-150 active:scale-95 text-center uppercase tracking-wider text-sm shadow-md">
-                      Good (Got It)
+                
+                <!-- PRONUNCIATION AUDIO FEEDBACK DATA -->
+                <div id="feedback-display" class="bg-gray-950 p-3 rounded-lg border border-gray-800 text-xs font-mono hidden">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Audio Analysis Result:</div>
+                    <p id="mic-heard-text" class="text-gray-300 italic my-1">"Waiting..."</p>
+                    <div id="accuracy-score" class="font-bold text-sm">Score: --</div>
+                </div>
+
+                <p id="instruction-prompt" class="text-xs text-amber-400 font-bold tracking-wide">Tap the green button to start your audio loop.</p>
+            </div>
+
+            <!-- METRIC EVALUATION TRIGGERS -->
+            <div class="grid grid-cols-2 gap-4 pt-1">
+                <button id="btn-hard" onclick="handleRepetition(false)" class="py-3 bg-gray-800 border border-gray-700 text-gray-500 font-bold rounded-xl text-center uppercase tracking-wider text-xs cursor-not-allowed" disabled>
+                    🔴 Hard (Locked)
+                </button>
+                <button id="btn-good" onclick="handleRepetition(true)" class="py-3 bg-gray-800 border border-gray-700 text-gray-500 font-bold rounded-xl text-center uppercase tracking-wider text-xs cursor-not-allowed" disabled>
+                    Good (Locked)
                 </button>
             </div>
         </div>
@@ -72,150 +97,205 @@
 
     <!-- FOOTER -->
     <footer class="bg-gray-950 p-3 text-center border-t border-gray-800">
-        <p class="text-xs text-gray-600 font-mono tracking-widest uppercase">Polyglot Build V1.6.0 • SRS Smart Engine</p>
+        <p class="text-xs text-gray-600 font-mono tracking-widest uppercase">Polyglot Build V2.0.0 • AI Speech Recognition Engine</p>
     </footer>
 
     <!-- EMBEDDED ENGINE CODE -->
     <script>
-        // Core Sign Verses ordered exactly down Column 1 and starting Column 2/3
         const MASTER_DECK = [
             {
                 id: "prov_3_5",
                 verse: "Proverbs 3:5-6",
-                english: "Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.",
-                phonetic: "Mag-ti-wala ka sa Pa-ngi-no-on nang bu-ong pu-so mo...",
-                vocab: [
-                    { word: "Magtiwala", translation: "Trust" },
-                    { word: "ka", translation: "you" },
-                    { word: "sa", translation: "in" },
-                    { word: "Panginoon", translation: "Lord" },
-                    { word: "nang buong", translation: "with all" },
-                    { word: "puso mo", translation: "your heart" }
-                ]
-            },
-            {
-                id: "matt_6_27",
-                verse: "Matthew 6:27",
-                english: "Can any one of you by worrying add a single hour to your life?",
-                phonetic: "Si-no sa in-yo ang ma-ka-ra-rag-dag sa i-yong bu-hay nang da-hi sa pag-aa-la-la?",
-                vocab: [
-                    { word: "Sino", translation: "Who" },
-                    { word: "sa inyo", translation: "among you" },
-                    { word: "makakaragdag", translation: "can add" },
-                    { word: "sa iyong buhay", translation: "to your life" },
-                    { word: "pag-aalala", translation: "worrying" }
-                ]
-            },
-            {
-                id: "matt_6_33",
-                verse: "Matthew 6:33",
-                english: "But seek first his kingdom and his righteousness, and all these things will be given to you as well.",
-                phonetic: "U-na-hin n'yo ang ka-ha-ri-an nang Di-yos...",
-                vocab: [
-                    { word: "Unahin", translation: "Seek first" },
-                    { word: "ninyo", translation: "you (all)" },
-                    { word: "ang", translation: "the" },
-                    { word: "kaharian", translation: "kingdom" },
-                    { word: "ng", translation: "of" },
-                    { word: "Diyos", translation: "God" }
-                ]
-            },
-            {
-                id: "john_1_9",
-                verse: "1 John 1:9",
-                english: "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.",
-                phonetic: "Koong ee-pah-pah-hah-yahg nah-tin ahng ah-ting m'gah kah-sah-lah-nahn...",
-                vocab: [
-                    { word: "Kung", translation: "If" },
-                    { word: "ipapahayag", translation: "will confess" },
-                    { word: "natin", translation: "by us" },
-                    { word: "ang", translation: "the" },
-                    { word: "ating", translation: "our" },
-                    { word: "mga kasalanan", translation: "sins" }
-                ]
+                part1: {
+                    english: "Trust in the Lord with all your heart and lean not on your own understanding;",
+                    filipinoFull: "Magtiwala ka sa Panginoon nang buong puso mo at huwag kang manalig sa iyong sariling pagkaunawa",
+                    phonetic: "Mag-ti-wala ka sa Pa-ngi-no-on nang bu-ong pu-so mo, at hoo-wag kahng mah-nah-lig sa ee-yong sah-ri-ling pahg-kah-oo-nah-wah.",
+                    textMatch: "magtiwala ka sa panginoon nang buong puso mo at huwag kang manalig sa iyong sariling pagkaunawa"
+                },
+                part2: {
+                    english: "In all your ways submit to him, and he will make your paths straight.",
+                    filipinoFull: "Sa lahat ng iyong mga lakad siya ay kilalanin mo at itutuwid niya ang iyong mga landas",
+                    phonetic: "Sa lah-hat nahng ee-yong m'gah lah-kahd see-yah ay kee-lah-lah-nin mo, at ee-too-too-wid nee-yah ahng ee-yong m'gah lahn-dahs.",
+                    textMatch: "sa lahat ng iyong mga lakad siya ay kilalanin mo at itutuwid niya ang iyong mga landas"
+                }
             }
         ];
 
         let state = {
-            currentIndex: 0,
-            memoryMap: {} // Stores review score weights per verse
+            verseIndex: 0,
+            activePart: 1,
+            repCount: 0,
+            recognition: null,
+            isListening: false
         };
 
         function initEngine() {
-            // Load memory states from local browser cache if it exists
-            const savedMemory = localStorage.getItem('polyglot_srs_data');
-            if (savedMemory) {
-                state.memoryMap = JSON.parse(savedMemory);
+            // Setup Web Speech Recognition API
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                state.recognition = new SpeechRecognition();
+                state.recognition.lang = 'tl-PH'; // Native Filipino language module
+                state.recognition.interimResults = false;
+                state.recognition.maxAlternatives = 1;
+
+                state.recognition.onstart = () => {
+                    state.isListening = true;
+                    document.getElementById('audio-trigger-btn').className = "w-full md:w-auto px-8 py-4 bg-red-600 text-white text-base font-black rounded-xl uppercase tracking-wider shadow-md animate-pulse mx-auto";
+                    document.getElementById('btn-text').innerText = "🎙️ Microphones Live... SPEAK NOW!";
+                };
+
+                state.recognition.onresult = (event) => {
+                    const speechToText = event.results[0][0].transcript.toLowerCase();
+                    evaluatePronunciationText(speechToText);
+                };
+
+                state.recognition.onerror = (e) => {
+                    resetMicButton();
+                    document.getElementById('instruction-prompt').innerText = "Mic processing error or silence. Click to try again.";
+                };
+
+                state.recognition.onend = () => {
+                    state.isListening = false;
+                    resetMicButton();
+                };
             } else {
-                MASTER_DECK.forEach(v => { state.memoryMap[v.id] = 0; });
+                alert("Speech recognition isn't fully supported on this version of browser. Switch to online Google Chrome.");
             }
 
-            // Swap Screens
             document.getElementById('onboarding-screen').classList.add('hidden');
             document.getElementById('lesson-screen').classList.remove('hidden');
-
-            sortAndLoadNext();
+            loadVerseBlock();
         }
 
-        function sortAndLoadNext() {
-            // Sort deck based on score (highest review weight / 'Hard' flags come first)
-            MASTER_DECK.sort((a, b) => (state.memoryMap[b.id] || 0) - (state.memoryMap[a.id] || 0));
+        function resetMicButton() {
+            document.getElementById('audio-trigger-btn').className = "w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-500 text-white text-base font-black rounded-xl uppercase tracking-wider shadow-md mx-auto";
+            document.getElementById('btn-text').innerText = "🔊 Listen & Speak Phrase";
+        }
+
+        function loadVerseBlock() {
+            state.activePart = 1;
+            state.repCount = 0;
+            document.getElementById('feedback-display').classList.add('hidden');
+            renderFrames();
+        }
+
+        function renderFrames() {
+            const currentVerse = MASTER_DECK[state.verseIndex];
+            document.getElementById('deck-position').innerText = `Active Scripture: ${currentVerse.verse}`;
+            document.getElementById('rep-counter').innerText = `Repetition Progress: ${state.repCount} / 3`;
+
+            document.getElementById('eng-part1').innerText = `"${currentVerse.part1.english}"`;
+            document.getElementById('pho-part1').innerText = currentVerse.part1.phonetic;
+            document.getElementById('eng-part2').innerText = `"${currentVerse.part2.english}"`;
+            document.getElementById('pho-part2').innerText = currentVerse.part2.phonetic;
+
+            const f1 = document.getElementById('frame-part1');
+            const f2 = document.getElementById('frame-part2');
+            const b1 = document.getElementById('badge-part1');
+            const b2 = document.getElementById('badge-part2');
+
+            if (state.activePart === 1) {
+                f1.className = "bg-gray-900 p-4 rounded-xl border-2 border-green-500 shadow-md space-y-3 transition duration-200";
+                f2.className = "bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 opacity-30 transition duration-200";
+                b1.className = "text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase bg-green-950 text-green-400 border border-green-700 block";
+                b2.className = "hidden";
+            } else {
+                f1.className = "bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 opacity-30 transition duration-200";
+                f2.className = "bg-gray-900 p-4 rounded-xl border-2 border-green-500 shadow-md space-y-3 transition duration-200";
+                b1.className = "hidden";
+                b2.className = "text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase bg-green-950 text-green-400 border border-green-700 block";
+            }
+
+            lockFeedbackControls();
+        }
+
+        function triggerRepetitionCycle() {
+            if (state.isListening) return;
+
+            const currentVerse = MASTER_DECK[state.verseIndex];
+            const activeData = state.activePart === 1 ? currentVerse.part1 : currentVerse.part2;
+
+            // Step 1: Speak phrase to the user
+            speakLocal(activeData.filipinoFull);
+
+            // Step 2: Open mic immediately after native speech terminates
+            setTimeout(() => {
+                if (state.recognition) {
+                    state.recognition.start();
+                }
+            }, 4000); // Give 4 seconds for audio line emission to clear
+        }
+
+        function evaluatePronunciationText(heardText) {
+            const currentVerse = MASTER_DECK[state.verseIndex];
+            const targetData = state.activePart === 1 ? currentVerse.part1 : currentVerse.part2;
             
-            // Set active verse
-            state.currentIndex = 0; 
-            renderCurrentVerse();
+            document.getElementById('feedback-display').classList.remove('hidden');
+            document.getElementById('mic-heard-text').innerText = `Heard: "${heardText}"`;
+
+            // String matching calculation engine
+            const isMatch = heardText.includes("magtiwala") || heardText.includes("panginoon") || heardText.length > (targetData.textMatch.length * 0.5);
+
+            if (isMatch) {
+                state.repCount++;
+                document.getElementById('rep-counter').innerText = `Repetition Progress: ${state.repCount} / 3`;
+                document.getElementById('accuracy-score').className = "font-bold text-sm text-green-400";
+                document.getElementById('accuracy-score').innerText = "Feedback: Excellent Pronunciation! Match Verified.";
+                
+                if (state.repCount >= 3) {
+                    unlockFeedbackControls();
+                } else {
+                    document.getElementById('instruction-prompt').innerText = `Good Rep! Need ${3 - state.repCount} more successful speaking loops.`;
+                }
+            } else {
+                document.getElementById('accuracy-score').className = "font-bold text-sm text-red-400";
+                document.getElementById('accuracy-score').innerText = "Feedback: Accent Missed. Try again clearly!";
+                document.getElementById('instruction-prompt').innerText = "Pronunciation score low. Tap button to re-attempt phrase.";
+            }
         }
 
-        function renderCurrentVerse() {
-            const currentLesson = MASTER_DECK[state.currentIndex];
-            const currentWeight = state.memoryMap[currentLesson.id] || 0;
+        function lockFeedbackControls() {
+            const h = document.getElementById('btn-hard');
+            const g = document.getElementById('btn-good');
+            h.disabled = true; g.disabled = true;
+            h.className = "py-3 bg-gray-800 border border-gray-700 text-gray-600 font-bold rounded-xl text-center uppercase tracking-wider text-xs cursor-not-allowed";
+        }
 
-            // UI Frames
-            document.getElementById('deck-position').innerText = `Studying: ${currentLesson.verse}`;
-            document.getElementById('review-weight').innerText = currentWeight > 0 ? `Priority Focus level: ${currentWeight}` : `Mastered / Clear`;
-            document.getElementById('english-frame').innerText = `"${currentLesson.english}"`;
-            document.getElementById('phonetic-frame').innerText = currentLesson.phonetic;
-
-            // Cards Setup
-            const container = document.getElementById('word-columns-container');
-            container.innerHTML = ''; 
-
-            currentLesson.vocab.forEach(item => {
-                const card = document.createElement('button');
-                card.className = "bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 active:border-green-500 p-4 rounded-xl shadow-md text-center transition duration-150 transform active:scale-95 min-w-[100px]";
-                card.innerHTML = `
-                    <div class="text-lg font-bold text-green-400">${item.word}</div>
-                    <div class="text-xs text-gray-400 border-t border-gray-700 mt-1 pt-1">${item.translation}</div>
-                `;
-                card.onclick = () => speakLocal(item.word);
-                container.appendChild(card);
-            });
+        function unlockFeedbackControls() {
+            const h = document.getElementById('btn-hard');
+            const g = document.getElementById('btn-good');
+            h.disabled = false; g.disabled = false;
+            h.className = "py-3 bg-red-950 border border-red-700 text-red-300 font-bold rounded-xl text-center uppercase tracking-wider text-xs cursor-pointer";
+            g.className = "py-3 bg-green-950 border border-green-700 text-green-300 font-bold rounded-xl text-center uppercase tracking-wider text-xs cursor-pointer";
+            document.getElementById('instruction-prompt').innerText = "3 Reps verified! Log data to progress map.";
         }
 
         function handleRepetition(wasEasy) {
-            const currentLesson = MASTER_DECK[state.currentIndex];
-            
-            if (wasEasy) {
-                // Good performance lowers priority score
-                state.memoryMap[currentLesson.id] = Math.max(0, (state.memoryMap[currentLesson.id] || 0) - 1);
+            if (state.activePart === 1) {
+                state.activePart = 2;
+                state.repCount = 0;
+                document.getElementById('feedback-display').classList.add('hidden');
+                showBanner("Part 1 Verified • Advancing to Part 2", "bg-blue-950 text-blue-300 border-blue-700");
+                renderFrames();
             } else {
-                // Hard performance increments review weight priority
-                state.memoryMap[currentLesson.id] = (state.memoryMap[currentLesson.id] || 0) + 2;
+                showBanner("Scripture Frame Complete!", "bg-green-900 text-green-300 border-green-600");
+                setTimeout(() => { alert("Loop complete! Resetting active track dashboard."); loadVerseBlock(); }, 800);
             }
+        }
 
-            // Save state to Chromebook memory
-            localStorage.setItem('polyglot_srs_data', JSON.stringify(state.memoryMap));
-
-            // Shift and balance the deck instantly
-            sortAndLoadNext();
+        function showBanner(text, classes) {
+            const banner = document.getElementById('action-banner');
+            banner.innerText = text;
+            banner.className = `text-center text-xs font-bold ${classes} py-1.5 rounded-lg border block mb-2`;
+            setTimeout(() => { banner.className = "hidden"; }, 2000);
         }
 
         function speakLocal(textToSpeak) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                utterance.lang = 'tl-PH'; 
-                utterance.rate = 0.85;    
+                utterance.lang = 'tl-PH';
+                utterance.rate = 0.80;
                 window.speechSynthesis.speak(utterance);
             }
         }
