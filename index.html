@@ -2,51 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Polyglot Training Suite</title>
+    <title>Polyglot Structure Trainer</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-900 text-white p-6">
 
-    <!-- 1. Three-Cup Selector -->
-    <div class="max-w-md mx-auto mb-10 text-center">
-        <h2 class="text-xl font-bold mb-4">Select Training Module</h2>
-        <div class="grid grid-cols-3 gap-4">
-            <button onclick="loadDeck('A')" class="p-4 bg-gray-800 border rounded-xl">Cup 1</button>
-            <button onclick="loadDeck('B')" class="p-4 bg-gray-800 border rounded-xl">Cup 2</button>
-            <button onclick="loadDeck('C')" class="p-4 bg-gray-800 border rounded-xl">Cup 3</button>
+    <div class="max-w-md mx-auto text-center mb-8">
+        <h2 class="text-xl font-bold mb-4">Training Structure</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="loadLevel(0)" class="p-4 bg-blue-800 rounded-lg font-bold">Structure 1: Intro</button>
+            <button onclick="loadLevel(1)" class="p-4 bg-blue-800 rounded-lg font-bold">Structure 2: Full Phrase</button>
         </div>
     </div>
 
-    <!-- 2. Training Engine -->
-    <div id="engine" class="max-w-lg mx-auto bg-gray-800 p-6 rounded-xl hidden">
-        <h3 id="current-task" class="text-green-400 font-bold mb-4"></h3>
-        <p id="target-tl" class="text-3xl font-black mb-2"></p>
-        <p id="target-pho" class="text-amber-500 font-mono text-sm mb-6"></p>
+    <div id="trainer" class="hidden max-w-lg mx-auto bg-gray-800 p-6 rounded-xl text-center">
+        <p id="eng-display" class="text-gray-400 italic mb-2"></p>
+        <p id="tl-display" class="text-3xl font-black mb-1"></p>
+        <p id="pho-display" class="text-amber-500 font-mono text-sm mb-6"></p>
         
-        <div class="flex gap-4">
-            <button id="mic-btn" onclick="startRecognition()" class="flex-1 py-4 bg-green-600 rounded-lg font-bold">🎙️ Speak Phrase</button>
-            <button onclick="nextRep()" class="w-1/3 py-4 bg-blue-900 rounded-lg">Next</button>
-        </div>
-        <p id="status" class="mt-4 text-center font-bold"></p>
+        <button id="listen-btn" onclick="startRecognition()" class="w-full py-4 bg-green-600 rounded-lg font-bold mb-4">🎙️ Speak Phrase</button>
+        <div id="rep-counter" class="text-sm font-bold text-green-400">Reps: 0/3</div>
     </div>
 
     <script>
-        const DECKS = {
-            'A': { tl: "Magtiwala ka", pho: "Mag-ti-wala ka", eng: "Trust in the Lord" },
-            'B': { tl: "sa Panginoon", pho: "sa Pa-ngi-no-on", eng: "in the Lord" },
-            'C': { tl: "nang buong puso", pho: "nang bu-ong pu-so", eng: "with all your heart" }
-        };
-        let currentKey = '';
+        const STRUCTURES = [
+            { eng: "Going", tl: "Pupunta", pho: "Poo-poon-tah" },
+            { eng: "I am going home", tl: "Pupunta ako sa bahay", pho: "Poo-poon-tah ah-koh sah bah-high" }
+        ];
+        let currentIdx = 0;
         let reps = 0;
 
-        function loadDeck(key) {
-            currentKey = key;
+        function loadLevel(idx) {
+            currentIdx = idx;
             reps = 0;
-            document.getElementById('engine').classList.remove('hidden');
-            document.getElementById('current-task').innerText = "Training: " + DECKS[key].eng;
-            document.getElementById('target-tl').innerText = DECKS[key].tl;
-            document.getElementById('target-pho').innerText = DECKS[key].pho;
-            document.getElementById('status').innerText = "Reps: 0/3";
+            document.getElementById('trainer').classList.remove('hidden');
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('eng-display').innerText = STRUCTURES[currentIdx].eng;
+            document.getElementById('tl-display').innerText = STRUCTURES[currentIdx].tl;
+            document.getElementById('pho-display').innerText = STRUCTURES[currentIdx].pho;
+            document.getElementById('rep-counter').innerText = "Reps: " + reps + "/3";
         }
 
         const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -54,22 +51,19 @@
 
         function startRecognition() {
             recog.start();
-            document.getElementById('status').innerText = "Listening...";
         }
 
         recog.onresult = (e) => {
             let heard = e.results[0][0].transcript.toLowerCase();
-            let target = DECKS[currentKey].tl.toLowerCase();
+            let target = STRUCTURES[currentIdx].tl.toLowerCase();
             if (heard.includes(target) || target.includes(heard)) {
                 reps++;
-                document.getElementById('status').innerText = "Correct! Reps: " + reps + "/3";
-                if(reps >= 3) document.getElementById('status').innerText = "Goal Met! Excellent.";
+                updateUI();
+                if(reps >= 3) alert("Goal Met!");
             } else {
-                document.getElementById('status').innerText = "Try again! Heard: " + heard;
+                alert("Try again. You said: " + heard);
             }
         };
-
-        function nextRep() { reps = 0; document.getElementById('status').innerText = "Reps: 0/3"; }
     </script>
 </body>
 </html>
