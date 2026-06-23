@@ -19,7 +19,7 @@
     <!-- MAIN INTERACTIVE MONITOR -->
     <main class="flex-grow flex flex-col justify-center items-center p-4">
         
-        <!-- ONBOARDING PACKAGE SELECTION SCREEN -->
+        <!-- ONBOARDING SCREEN -->
         <div id="onboarding-screen" class="w-full max-w-md bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl text-center space-y-6">
             <h2 class="text-2xl font-bold tracking-tight text-white">Select Language Track</h2>
             <p class="text-sm text-gray-400">Initialize your learning engine module below.</p>
@@ -33,31 +33,86 @@
             </div>
         </div>
 
-        <!-- ACTIVE LESSON SCREEN (HIDDEN BY DEFAULT) -->
+        <!-- ACTIVE LESSON SCREEN -->
         <div id="lesson-screen" class="w-full max-w-2xl bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl space-y-6 hidden">
-            <!-- English Reference Prompt Frame -->
             <div class="bg-gray-950 p-5 rounded-xl border border-gray-700 shadow-inner text-center">
                 <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">English Source Target</div>
-                <p id="english-frame" class="text-xl font-semibold text-gray-200 italic leading-relaxed">Loading track source...</p>
+                <p id="english-frame" class="text-xl font-semibold text-gray-200 italic leading-relaxed"></p>
             </div>
 
-            <!-- Target Language Render Array Area -->
             <div class="space-y-3">
-                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Target Language Component Deck</div>
-                <div id="word-columns-container" class="flex flex-wrap gap-3 justify-center items-center bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-inner min-h-[140px]">
-                    <!-- Dynamic JavaScript matrix population injects cards here -->
-                </div>
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Target Language Component Deck (Tap to Hear)</div>
+                <div id="word-columns-container" class="flex flex-wrap gap-3 justify-center items-center bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-inner min-h-[140px]"></div>
             </div>
         </div>
 
     </main>
 
-    <!-- FOOTER STATUS INDICATOR -->
+    <!-- FOOTER -->
     <footer class="bg-gray-950 p-3 text-center border-t border-gray-800">
-        <p class="text-xs text-gray-600 font-mono tracking-widest uppercase">Polyglot Build V1.1.0 • Standalone Offline Mode Active</p>
+        <p class="text-xs text-gray-600 font-mono tracking-widest uppercase">Polyglot Build V1.2.0 • Unified Engine Mode</p>
     </footer>
 
-    <!-- LINK EXTERNAL CODE CORE -->
-    <script src="app.js"></script>
+    <!-- EMBEDDED ENGINE CODE -->
+    <script>
+        const DATA_PACKAGES = {
+            ministry: {
+                title: "Ministry & Faith",
+                lessons: [
+                    {
+                        verse: "1 John 1:9",
+                        english: "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.",
+                        vocab: [
+                            { word: "Kung", translation: "If", audio: "https://translate.google.com/translate_tts?ie=UTF-8&tl=tl&client=tw-ob&q=Kung" },
+                            { word: "ipapahayag", translation: "will confess", audio: "https://translate.google.com/translate_tts?ie=UTF-8&tl=tl&client=tw-ob&q=ipapahayag" },
+                            { word: "natin", translation: "by us", audio: "https://translate.google.com/translate_tts?ie=UTF-8&tl=tl&client=tw-ob&q=natin" },
+                            { word: "ang", translation: "the", audio: "https://translate.google.com/translate_tts?ie=UTF-8&tl=tl&client=tw-ob&q=ang" },
+                            { word: "ating", translation: "our", audio: "https://translate.google.com/translate_tts?ie=UTF-8&tl=tl&client=tw-ob&q=ating" },
+                            { word: "mga kasalanan", translation: "sins", audio: "https://translate.google.com/translate_tts?ie=UTF-8&tl=tl&client=tw-ob&q=mga%20kasalanan" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function selectPackage(packageId) {
+            const pack = DATA_PACKAGES[packageId];
+            if (!pack) return;
+
+            // Swap Screens
+            document.getElementById('onboarding-screen').classList.add('hidden');
+            document.getElementById('lesson-screen').classList.remove('hidden');
+
+            // Load First Lesson Data
+            const currentLesson = pack.lessons[0];
+            document.getElementById('english-frame').innerText = `"${currentLesson.english}" (${currentLesson.verse})`;
+
+            // Build Interactive Cards
+            const container = document.getElementById('word-columns-container');
+            container.innerHTML = ''; // Clear box
+
+            currentLesson.vocab.forEach(item => {
+                const card = document.createElement('button');
+                card.className = "bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 active:border-green-500 p-4 rounded-xl shadow-md text-center transition duration-150 transform active:scale-95 min-w-[100px]";
+                
+                card.innerHTML = `
+                    <div class="text-lg font-bold text-green-400">${item.word}</div>
+                    <div class="text-xs text-gray-400 border-t border-gray-700 mt-1 pt-1">${item.translation}</div>
+                `;
+
+                // Play audio on tap
+                card.onclick = () => {
+                    const audio = new Audio(item.audio);
+                    audio.play().catch(e => console.log("Audio playback blocked or delayed"));
+                };
+
+                container.appendChild(card);
+            });
+
+            // Update Header Badge
+            document.getElementById('counter-badge').innerText = pack.title;
+            document.getElementById('counter-badge').className = "bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-600 shadow-inner";
+        }
+    </script>
 </body>
 </html>
