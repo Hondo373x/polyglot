@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Polyglot: Training Suite</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: #eee; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+        .box { padding: 30px; border: 1px solid #444; border-radius: 8px; cursor: pointer; text-align: center; background: #222; }
+        .box:hover { border-color: #00ff00; }
+        .active { border-color: #00ff00; background: #1a3a1a; }
+    </style>
+</head>
+<body>
 
+    <h1>Training Suite</h1>
+
+    <!-- 1. Three-Cup Method -->
+    <h3>Three-Cup Method</h3>
+    <div class="grid">
+        <div class="box" onclick="select(1)">Cup 1</div>
+        <div class="box" onclick="select(2)">Cup 2</div>
+        <div class="box" onclick="select(3)">Cup 3</div>
+    </div>
+
+    <!-- 2. Flash Deck -->
+    <h3>Flash Deck</h3>
+    <div class="box" id="flashcard" onclick="nextFlash()">Tap to Start Deck</div>
+
+    <!-- 3. Branch Deck -->
+    <h3>Branch Deck</h3>
+    <div class="box" onclick="branch(true)">Path A (Yes)</div>
+    <div class="box" onclick="branch(false)">Path B (No)</div>
+
+    <script>
+        // Methods
+        function select(n) { alert("Selected: Cup " + n); }
+        
+        let flashIdx = 0;
+        const cards = ["Card 1: Basic", "Card 2: Intermediate", "Card 3: Advanced"];
+        function nextFlash() {
+            flashIdx = (flashIdx + 1) % cards.length;
+            document.getElementById('flashcard').innerText = cards[flashIdx];
+        }
+
+        function branch(choice) {
+            alert("Branch selected: " + (choice ? "Path A" : "Path B"));
+        }
+    </script>
+</body>
+</html>
