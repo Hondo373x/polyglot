@@ -3,65 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3-Cup Language Engine</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        #app-container {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-        }
-        #onboarding-screen button {
-            transition: transform 0.1s ease;
-        }
-        #onboarding-screen button:active {
-            transform: scale(0.98);
-        }
-    </style>
+    <title>Polyglot System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<div id="app-container">
-    <!-- SCREEN 1: ONBOARDING PACKAGES -->
-    <div id="onboarding-screen">
-        <h2>Why are you learning Filipino?</h2>
-        <p style="color: #666; margin-bottom: 25px;">Pick a trajectory package to customize your vocabulary stack:</p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-            <button onclick="selectPackage('ministry')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #e8f5e9; border: 2px solid #2e7d32; cursor: pointer; font-size: 1rem;">✝️ Ministry & Faith</button>
-            <button onclick="selectPackage('business')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #e3f2fd; border: 2px solid #1565c0; cursor: pointer; font-size: 1rem;">💼 Business & Work</button>
-            <button onclick="selectPackage('tourism')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #fff3e0; border: 2px solid #ef6c00; cursor: pointer; font-size: 1rem;">🧳 Tourism & Travel</button>
-            <button onclick="selectPackage('family')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #f3e5f5; border: 2px solid #6a1b9a; cursor: pointer; font-size: 1rem;">🏠 Daily & Family</button>
-        </div>
-        <button onclick="selectPackage('support')" style="width: 100%; padding: 20px; font-weight: bold; border-radius: 12px; background: #fafafa; border: 2px solid #424242; cursor: pointer; font-size: 1rem;">🌱 Trauma Support & Coaching</button>
-    </div>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col justify-between">
 
-    <!-- SCREEN 2: MAIN LESSON ENGINE (Hidden at start) -->
-    <div id="lesson-screen" style="display: none;">
-        <div id="counter-badge" style="font-size: 1rem; background: #333; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 20px;">Section Build: 1/3</div>
-        <div id="display-area">
-            <div id="english-frame" style="font-size: 1.4rem; color: #555; margin: 10px 0; font-weight: 500;"></div>
-            <!-- Word-by-word columns inject here -->
-            <div id="word-columns-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 30px 0;"></div>
+    <!-- TOP BAR -->
+    <header class="bg-gray-800 p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-xl font-black tracking-wider text-green-400">POLYGLOT ENGINE</h1>
+        <div id="counter-badge" class="bg-green-900 text-green-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-green-600 shadow-inner">
+            System Ready
         </div>
-        <div id="mic-status" style="margin-top: 20px; font-weight: bold; padding: 15px; border-radius: 30px; background: #ffebee; color: #c62828; display: inline-block;">🎙️ Microphone Off</div>
-        <div id="feedback-box" style="margin-top: 20px; font-weight: bold; min-height: 25px; font-size: 1.2rem;"></div>
-    </div>
-</div>
+    </header>
 
-<script src="app.js"></script>
+    <!-- MAIN INTERACTIVE MONITOR -->
+    <main class="flex-grow flex flex-col justify-center items-center p-4">
+        
+        <!-- ONBOARDING PACKAGE SELECTION SCREEN -->
+        <div id="onboarding-screen" class="w-full max-w-md bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl text-center space-y-6">
+            <h2 class="text-2xl font-bold tracking-tight text-white">Select Language Track</h2>
+            <p class="text-sm text-gray-400">Initialize your learning engine module below.</p>
+            <div class="space-y-4 pt-2">
+                <button onclick="selectPackage('ministry')" class="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-extrabold text-lg rounded-xl transition duration-200 transform active:scale-95 shadow-md uppercase tracking-wider">
+                    Ministry & Faith
+                </button>
+                <button class="w-full py-4 bg-gray-700 text-gray-400 font-bold text-lg rounded-xl cursor-not-allowed opacity-50 uppercase tracking-wider" disabled>
+                    Business Track (Locked)
+                </button>
+            </div>
+        </div>
+
+        <!-- ACTIVE LESSON SCREEN (HIDDEN BY DEFAULT) -->
+        <div id="lesson-screen" class="w-full max-w-2xl bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl space-y-6 hidden">
+            <!-- English Reference Prompt Frame -->
+            <div class="bg-gray-950 p-5 rounded-xl border border-gray-700 shadow-inner text-center">
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">English Source Target</div>
+                <p id="english-frame" class="text-xl font-semibold text-gray-200 italic leading-relaxed">Loading track source...</p>
+            </div>
+
+            <!-- Target Language Render Array Area -->
+            <div class="space-y-3">
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Target Language Component Deck</div>
+                <div id="word-columns-container" class="flex flex-wrap gap-3 justify-center items-center bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-inner min-h-[140px]">
+                    <!-- Dynamic JavaScript matrix population injects cards here -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER STATUS INDICATOR -->
+    <footer class="bg-gray-950 p-3 text-center border-t border-gray-800">
+        <p class="text-xs text-gray-600 font-mono tracking-widest uppercase">Polyglot Build V1.1.0 • Standalone Offline Mode Active</p>
+    </footer>
+
+    <!-- LINK EXTERNAL CODE CORE -->
+    <script src="app.js"></script>
 </body>
 </html>
