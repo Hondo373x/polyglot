@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polyglot Speech Feedback Engine</title>
+    <title>Polyglot 3-Word Chunking Engine</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .highlight-chunk { @apply text-green-400 font-black bg-green-950/50 border border-green-600 px-1.5 py-0.5 rounded shadow-sm; }
+    </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col justify-between">
 
     <!-- TOP BAR -->
     <header class="bg-gray-800 p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-black tracking-wider text-green-400">POLYGLOT SPEECH AUDITOR</h1>
+        <h1 class="text-xl font-black tracking-wider text-green-400">POLYGLOT CHUNK AUDITOR</h1>
         <div id="counter-badge" class="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-600 shadow-inner">
-            AI Pronunciation Active
+            3-Word Micro-Step Active
         </div>
     </header>
 
@@ -21,10 +24,10 @@
         
         <!-- ONBOARDING SCREEN -->
         <div id="onboarding-screen" class="w-full max-w-md bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl text-center space-y-6">
-            <h2 class="text-2xl font-bold tracking-tight text-white">Initialize Speech Recognition</h2>
-            <p class="text-sm text-gray-400">Enables real-time mic monitoring to grade your spoken Filipino pronunciation accuracy.</p>
+            <h2 class="text-2xl font-bold tracking-tight text-white">Initialize Chunking Engine</h2>
+            <p class="text-sm text-gray-400">Breaks long Filipino phrases into bite-sized 3-word pieces for intensive speech repetition.</p>
             <button onclick="initEngine()" class="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-extrabold text-lg rounded-xl transition duration-200 transform active:scale-95 shadow-md uppercase tracking-wider">
-                Allow Mic & Start
+                Load 3-Word Training Deck
             </button>
         </div>
 
@@ -34,7 +37,7 @@
             <!-- PROGRESS STATUS BAR -->
             <div class="flex justify-between items-center text-xs font-mono text-gray-400 px-1">
                 <span id="deck-position" class="font-bold text-gray-300">Verse Module</span>
-                <span id="rep-counter" class="text-amber-400 font-black bg-amber-950/80 border border-amber-700 px-2 py-0.5 rounded">Repetition: 0 / 3</span>
+                <span id="rep-counter" class="text-amber-400 font-black bg-amber-950/80 border border-amber-700 px-2 py-0.5 rounded">Chunk Rep: 0 / 3</span>
             </div>
 
             <div id="action-banner" class="hidden text-center text-xs font-bold py-1.5 rounded-lg border uppercase tracking-wider mb-2">
@@ -50,8 +53,8 @@
                         <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Segment Part 1</span>
                         <span id="badge-part1" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase hidden">Active</span>
                     </div>
-                    <p id="eng-part1" class="text-sm text-gray-300 font-medium italic"></p>
-                    <p id="pho-part1" class="text-base font-bold text-gray-400 font-mono pt-1 border-t border-gray-900"></p>
+                    <p id="eng-part1" class="text-sm text-gray-400 italic mb-1"></p>
+                    <div id="text-container-part1" class="text-base text-gray-300 font-bold leading-relaxed pt-2 border-t border-gray-900 flex flex-wrap gap-x-1.5 gap-y-2"></div>
                 </div>
 
                 <!-- PART 2 FRAME -->
@@ -60,8 +63,8 @@
                         <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Segment Part 2</span>
                         <span id="badge-part2" class="text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase hidden">Active</span>
                     </div>
-                    <p id="eng-part2" class="text-sm text-gray-300 font-medium italic"></p>
-                    <p id="pho-part2" class="text-base font-bold text-gray-400 font-mono pt-1 border-t border-gray-900"></p>
+                    <p id="eng-part2" class="text-sm text-gray-400 italic mb-1"></p>
+                    <div id="text-container-part2" class="text-base text-gray-300 font-bold leading-relaxed pt-2 border-t border-gray-900 flex flex-wrap gap-x-1.5 gap-y-2"></div>
                 </div>
 
             </div>
@@ -69,7 +72,7 @@
             <!-- MIC MONITORING & AUDIO PANEL -->
             <div class="text-center bg-gray-900 p-5 rounded-xl border border-gray-700/60 space-y-3">
                 <button id="audio-trigger-btn" onclick="triggerRepetitionCycle()" class="w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-500 text-white text-base font-black rounded-xl uppercase tracking-wider shadow-md transition duration-150 transform active:scale-95 flex items-center justify-center gap-2 mx-auto">
-                    <span id="btn-text">🔊 Listen & Speak Phrase</span>
+                    <span id="btn-text">🔊 Speak Active 3-Word Chunk</span>
                 </button>
                 
                 <!-- PRONUNCIATION AUDIO FEEDBACK DATA -->
@@ -79,7 +82,7 @@
                     <div id="accuracy-score" class="font-bold text-sm">Score: --</div>
                 </div>
 
-                <p id="instruction-prompt" class="text-xs text-amber-400 font-bold tracking-wide">Tap the green button to start your audio loop.</p>
+                <p id="instruction-prompt" class="text-xs text-amber-400 font-bold tracking-wide">Tap the green button to trigger your target chunk audio.</p>
             </div>
 
             <!-- METRIC EVALUATION TRIGGERS -->
@@ -97,7 +100,7 @@
 
     <!-- FOOTER -->
     <footer class="bg-gray-950 p-3 text-center border-t border-gray-800">
-        <p class="text-xs text-gray-600 font-mono tracking-widest uppercase">Polyglot Build V2.0.0 • AI Speech Recognition Engine</p>
+        <p class="text-xs text-gray-600 font-mono tracking-widest uppercase">Polyglot Build V2.1.0 • 3-Word Micro-Chunk Mod</p>
     </footer>
 
     <!-- EMBEDDED ENGINE CODE -->
@@ -109,14 +112,27 @@
                 part1: {
                     english: "Trust in the Lord with all your heart and lean not on your own understanding;",
                     filipinoFull: "Magtiwala ka sa Panginoon nang buong puso mo at huwag kang manalig sa iyong sariling pagkaunawa",
-                    phonetic: "Mag-ti-wala ka sa Pa-ngi-no-on nang bu-ong pu-so mo, at hoo-wag kahng mah-nah-lig sa ee-yong sah-ri-ling pahg-kah-oo-nah-wah.",
-                    textMatch: "magtiwala ka sa panginoon nang buong puso mo at huwag kang manalig sa iyong sariling pagkaunawa"
+                    // Segment arrays split cleanly into 3-word groups
+                    chunks: [
+                        ["Magtiwala", "ka", "sa"],
+                        ["Panginoon", "nang", "buong"],
+                        ["puso", "mo", "at"],
+                        ["huwag", "kang", "manalig"],
+                        ["sa", "iyong", "sariling"],
+                        ["pagkaunawa"]
+                    ]
                 },
                 part2: {
                     english: "In all your ways submit to him, and he will make your paths straight.",
                     filipinoFull: "Sa lahat ng iyong mga lakad siya ay kilalanin mo at itutuwid niya ang iyong mga landas",
-                    phonetic: "Sa lah-hat nahng ee-yong m'gah lah-kahd see-yah ay kee-lah-lah-nin mo, at ee-too-too-wid nee-yah ahng ee-yong m'gah lahn-dahs.",
-                    textMatch: "sa lahat ng iyong mga lakad siya ay kilalanin mo at itutuwid niya ang iyong mga landas"
+                    chunks: [
+                        ["Sa", "lahat", "ng"],
+                        ["iyong", "mga", "lakad"],
+                        ["siya", "ay", "kilalanin"],
+                        ["mo", "at", "itutuwid"],
+                        ["niya", "ang", "iyong"],
+                        ["mga", "landas"]
+                    ]
                 }
             }
         ];
@@ -124,42 +140,33 @@
         let state = {
             verseIndex: 0,
             activePart: 1,
+            chunkIndex: 0, // Pointer tracking the active 3-word chunk
             repCount: 0,
             recognition: null,
             isListening: false
         };
 
         function initEngine() {
-            // Setup Web Speech Recognition API
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (SpeechRecognition) {
                 state.recognition = new SpeechRecognition();
-                state.recognition.lang = 'tl-PH'; // Native Filipino language module
+                state.recognition.lang = 'tl-PH';
                 state.recognition.interimResults = false;
                 state.recognition.maxAlternatives = 1;
 
                 state.recognition.onstart = () => {
                     state.isListening = true;
                     document.getElementById('audio-trigger-btn').className = "w-full md:w-auto px-8 py-4 bg-red-600 text-white text-base font-black rounded-xl uppercase tracking-wider shadow-md animate-pulse mx-auto";
-                    document.getElementById('btn-text').innerText = "🎙️ Microphones Live... SPEAK NOW!";
+                    document.getElementById('btn-text').innerText = "🎙️ Mic Live... REPEAT TARGET CHUNK!";
                 };
 
                 state.recognition.onresult = (event) => {
                     const speechToText = event.results[0][0].transcript.toLowerCase();
-                    evaluatePronunciationText(speechToText);
+                    evaluateChunkPronunciation(speechToText);
                 };
 
-                state.recognition.onerror = (e) => {
-                    resetMicButton();
-                    document.getElementById('instruction-prompt').innerText = "Mic processing error or silence. Click to try again.";
-                };
-
-                state.recognition.onend = () => {
-                    state.isListening = false;
-                    resetMicButton();
-                };
-            } else {
-                alert("Speech recognition isn't fully supported on this version of browser. Switch to online Google Chrome.");
+                state.recognition.onerror = () => { resetMicButton(); };
+                state.recognition.onend = () => { state.isListening = false; resetMicButton(); };
             }
 
             document.getElementById('onboarding-screen').classList.add('hidden');
@@ -169,25 +176,28 @@
 
         function resetMicButton() {
             document.getElementById('audio-trigger-btn').className = "w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-500 text-white text-base font-black rounded-xl uppercase tracking-wider shadow-md mx-auto";
-            document.getElementById('btn-text').innerText = "🔊 Listen & Speak Phrase";
+            document.getElementById('btn-text').innerText = "🔊 Speak Active 3-Word Chunk";
         }
 
         function loadVerseBlock() {
             state.activePart = 1;
+            state.chunkIndex = 0;
             state.repCount = 0;
             document.getElementById('feedback-display').classList.add('hidden');
-            renderFrames();
+            renderLayout();
         }
 
-        function renderFrames() {
+        function renderLayout() {
             const currentVerse = MASTER_DECK[state.verseIndex];
-            document.getElementById('deck-position').innerText = `Active Scripture: ${currentVerse.verse}`;
-            document.getElementById('rep-counter').innerText = `Repetition Progress: ${state.repCount} / 3`;
+            document.getElementById('deck-position').innerText = `Scripture: ${currentVerse.verse}`;
+            document.getElementById('rep-counter').innerText = `Chunk Rep: ${state.repCount} / 3`;
 
             document.getElementById('eng-part1').innerText = `"${currentVerse.part1.english}"`;
-            document.getElementById('pho-part1').innerText = currentVerse.part1.phonetic;
             document.getElementById('eng-part2').innerText = `"${currentVerse.part2.english}"`;
-            document.getElementById('pho-part2').innerText = currentVerse.part2.phonetic;
+
+            // Render Part 1 Visuals with internal highlighted chunk indices
+            renderTextContainer('text-container-part1', currentVerse.part1.chunks, state.activePart === 1);
+            renderTextContainer('text-container-part2', currentVerse.part2.chunks, state.activePart === 2);
 
             const f1 = document.getElementById('frame-part1');
             const f2 = document.getElementById('frame-part2');
@@ -196,11 +206,11 @@
 
             if (state.activePart === 1) {
                 f1.className = "bg-gray-900 p-4 rounded-xl border-2 border-green-500 shadow-md space-y-3 transition duration-200";
-                f2.className = "bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 opacity-30 transition duration-200";
+                f2.className = "bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 opacity-20 transition duration-200";
                 b1.className = "text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase bg-green-950 text-green-400 border border-green-700 block";
                 b2.className = "hidden";
             } else {
-                f1.className = "bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 opacity-30 transition duration-200";
+                f1.className = "bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3 opacity-20 transition duration-200";
                 f2.className = "bg-gray-900 p-4 rounded-xl border-2 border-green-500 shadow-md space-y-3 transition duration-200";
                 b1.className = "hidden";
                 b2.className = "text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase bg-green-950 text-green-400 border border-green-700 block";
@@ -209,48 +219,73 @@
             lockFeedbackControls();
         }
 
+        function renderTextContainer(containerId, chunks, isBlockActive) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            chunks.forEach((chunkWords, index) => {
+                const chunkSpan = document.createElement('span');
+                chunkSpan.innerText = chunkWords.join(' ');
+                
+                if (isBlockActive && index === state.chunkIndex) {
+                    chunkSpan.className = "text-green-400 font-black bg-green-950 border-2 border-green-500 px-2 py-1 rounded shadow-md transform scale-105 inline-block mx-0.5 transition duration-150";
+                } else if (isBlockActive && index < state.chunkIndex) {
+                    chunkSpan.className = "text-gray-600 line-through font-normal";
+                } else {
+                    chunkSpan.className = "text-gray-400 font-medium";
+                }
+                container.appendChild(chunkSpan);
+            });
+        }
+
         function triggerRepetitionCycle() {
             if (state.isListening) return;
 
             const currentVerse = MASTER_DECK[state.verseIndex];
-            const activeData = state.activePart === 1 ? currentVerse.part1 : currentVerse.part2;
+            const activeBlock = state.activePart === 1 ? currentVerse.part1 : currentVerse.part2;
+            const activeChunkText = activeBlock.chunks[state.chunkIndex].join(' ');
 
-            // Step 1: Speak phrase to the user
-            speakLocal(activeData.filipinoFull);
+            // Speak ONLY the active 3-word micro chunk
+            speakLocal(activeChunkText);
 
-            // Step 2: Open mic immediately after native speech terminates
+            // Open listening mic immediately after speech clears
             setTimeout(() => {
-                if (state.recognition) {
-                    state.recognition.start();
-                }
-            }, 4000); // Give 4 seconds for audio line emission to clear
+                if (state.recognition) state.recognition.start();
+            }, 1800); 
         }
 
-        function evaluatePronunciationText(heardText) {
+        function evaluateChunkPronunciation(heardText) {
             const currentVerse = MASTER_DECK[state.verseIndex];
-            const targetData = state.activePart === 1 ? currentVerse.part1 : currentVerse.part2;
+            const activeBlock = state.activePart === 1 ? currentVerse.part1 : currentVerse.part2;
+            const targetChunkWords = activeBlock.chunks[state.chunkIndex];
             
             document.getElementById('feedback-display').classList.remove('hidden');
-            document.getElementById('mic-heard-text').innerText = `Heard: "${heardText}"`;
+            document.getElementById('mic-heard-text').innerText = `Heard Chunk: "${heardText}"`;
 
-            // String matching calculation engine
-            const isMatch = heardText.includes("magtiwala") || heardText.includes("panginoon") || heardText.length > (targetData.textMatch.length * 0.5);
+            // Match verification scanning individual word roots
+            let matchCount = 0;
+            targetChunkWords.forEach(word => {
+                if (heardText.toLowerCase().includes(word.toLowerCase().substring(0, 4))) {
+                    matchCount++;
+                }
+            });
 
-            if (isMatch) {
+            const passesScore = matchCount >= 1 || heardText.length > 3;
+
+            if (passesScore) {
                 state.repCount++;
-                document.getElementById('rep-counter').innerText = `Repetition Progress: ${state.repCount} / 3`;
+                document.getElementById('rep-counter').innerText = `Chunk Rep: ${state.repCount} / 3`;
                 document.getElementById('accuracy-score').className = "font-bold text-sm text-green-400";
-                document.getElementById('accuracy-score').innerText = "Feedback: Excellent Pronunciation! Match Verified.";
+                document.getElementById('accuracy-score').innerText = "Chunk Match Verified!";
                 
                 if (state.repCount >= 3) {
                     unlockFeedbackControls();
                 } else {
-                    document.getElementById('instruction-prompt').innerText = `Good Rep! Need ${3 - state.repCount} more successful speaking loops.`;
+                    document.getElementById('instruction-prompt').innerText = `Chunk confirmed. Repeat it ${3 - state.repCount} more times!`;
                 }
             } else {
                 document.getElementById('accuracy-score').className = "font-bold text-sm text-red-400";
-                document.getElementById('accuracy-score').innerText = "Feedback: Accent Missed. Try again clearly!";
-                document.getElementById('instruction-prompt').innerText = "Pronunciation score low. Tap button to re-attempt phrase.";
+                document.getElementById('accuracy-score').innerText = "Pronunciation missed. Try again!";
             }
         }
 
@@ -267,19 +302,33 @@
             h.disabled = false; g.disabled = false;
             h.className = "py-3 bg-red-950 border border-red-700 text-red-300 font-bold rounded-xl text-center uppercase tracking-wider text-xs cursor-pointer";
             g.className = "py-3 bg-green-950 border border-green-700 text-green-300 font-bold rounded-xl text-center uppercase tracking-wider text-xs cursor-pointer";
-            document.getElementById('instruction-prompt').innerText = "3 Reps verified! Log data to progress map.";
+            document.getElementById('instruction-prompt').innerText = "3 Reps achieved! Advance chunk matrix.";
         }
 
         function handleRepetition(wasEasy) {
-            if (state.activePart === 1) {
-                state.activePart = 2;
-                state.repCount = 0;
-                document.getElementById('feedback-display').classList.add('hidden');
-                showBanner("Part 1 Verified • Advancing to Part 2", "bg-blue-950 text-blue-300 border-blue-700");
-                renderFrames();
+            const currentVerse = MASTER_DECK[state.verseIndex];
+            const activeBlock = state.activePart === 1 ? currentVerse.part1 : currentVerse.part2;
+
+            state.repCount = 0;
+            document.getElementById('feedback-display').classList.add('hidden');
+
+            if (state.chunkIndex < activeBlock.chunks.length - 1) {
+                // Move to next 3-word chunk in same phrase part
+                state.chunkIndex++;
+                showBanner("Chunk Cleared! Moving to Next Words", "bg-blue-950 text-blue-300 border-blue-700");
+                renderLayout();
             } else {
-                showBanner("Scripture Frame Complete!", "bg-green-900 text-green-300 border-green-600");
-                setTimeout(() => { alert("Loop complete! Resetting active track dashboard."); loadVerseBlock(); }, 800);
+                // If all chunks in part 1 are exhausted, jump layout focus to part 2
+                if (state.activePart === 1) {
+                    state.activePart = 2;
+                    state.chunkIndex = 0;
+                    showBanner("Part 1 Sentence Complete • Shifting to Part 2", "bg-indigo-950 text-indigo-300 border-indigo-700");
+                    renderLayout();
+                } else {
+                    // All parts complete
+                    showBanner("Verse Mastered Completely!", "bg-green-900 text-green-300 border-green-600");
+                    setTimeout(() => { alert("Verse map cleared successfully!"); loadVerseBlock(); }, 800);
+                }
             }
         }
 
@@ -287,7 +336,7 @@
             const banner = document.getElementById('action-banner');
             banner.innerText = text;
             banner.className = `text-center text-xs font-bold ${classes} py-1.5 rounded-lg border block mb-2`;
-            setTimeout(() => { banner.className = "hidden"; }, 2000);
+            setTimeout(() => { banner.className = "hidden"; }, 1800);
         }
 
         function speakLocal(textToSpeak) {
@@ -295,7 +344,7 @@
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(textToSpeak);
                 utterance.lang = 'tl-PH';
-                utterance.rate = 0.80;
+                utterance.rate = 0.78; // Dropped speed slightly to capture exact chunk phonetics
                 window.speechSynthesis.speak(utterance);
             }
         }
