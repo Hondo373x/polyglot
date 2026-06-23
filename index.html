@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Cup Language Engine</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        #app-container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        #onboarding-screen button {
+            transition: transform 0.1s ease;
+        }
+        #onboarding-screen button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+<div id="app-container">
+    <!-- SCREEN 1: ONBOARDING PACKAGES -->
+    <div id="onboarding-screen">
+        <h2>Why are you learning Filipino?</h2>
+        <p style="color: #666; margin-bottom: 25px;">Pick a trajectory package to customize your vocabulary stack:</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <button onclick="selectPackage('ministry')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #e8f5e9; border: 2px solid #2e7d32; cursor: pointer; font-size: 1rem;">✝️ Ministry & Faith</button>
+            <button onclick="selectPackage('business')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #e3f2fd; border: 2px solid #1565c0; cursor: pointer; font-size: 1rem;">💼 Business & Work</button>
+            <button onclick="selectPackage('tourism')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #fff3e0; border: 2px solid #ef6c00; cursor: pointer; font-size: 1rem;">🧳 Tourism & Travel</button>
+            <button onclick="selectPackage('family')" style="padding: 20px; font-weight: bold; border-radius: 12px; background: #f3e5f5; border: 2px solid #6a1b9a; cursor: pointer; font-size: 1rem;">🏠 Daily & Family</button>
+        </div>
+        <button onclick="selectPackage('support')" style="width: 100%; padding: 20px; font-weight: bold; border-radius: 12px; background: #fafafa; border: 2px solid #424242; cursor: pointer; font-size: 1rem;">🌱 Trauma Support & Coaching</button>
+    </div>
+
+    <!-- SCREEN 2: MAIN LESSON ENGINE (Hidden at start) -->
+    <div id="lesson-screen" style="display: none;">
+        <div id="counter-badge" style="font-size: 1rem; background: #333; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 20px;">Section Build: 1/3</div>
+        <div id="display-area">
+            <div id="english-frame" style="font-size: 1.4rem; color: #555; margin: 10px 0; font-weight: 500;"></div>
+            <!-- Word-by-word columns inject here -->
+            <div id="word-columns-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 30px 0;"></div>
+        </div>
+        <div id="mic-status" style="margin-top: 20px; font-weight: bold; padding: 15px; border-radius: 30px; background: #ffebee; color: #c62828; display: inline-block;">🎙️ Microphone Off</div>
+        <div id="feedback-box" style="margin-top: 20px; font-weight: bold; min-height: 25px; font-size: 1.2rem;"></div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
