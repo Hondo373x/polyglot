@@ -1,83 +1,49 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polyglot Audio Auditor</title>
+    <title>Polyglot V2.1</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col justify-between">
-    <header class="bg-gray-800 p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-black tracking-wider text-green-400">POLYGLOT AUDITOR</h1>
-    </header>
-    <main class="flex-grow flex flex-col justify-center items-center p-4">
-        <div id="onboarding-screen" class="w-full max-w-md bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl text-center space-y-6">
-            <h2 class="text-2xl font-bold text-white">Initialize Training Deck</h2>
-            <button onclick="initEngine()" class="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-extrabold text-lg rounded-xl transition transform active:scale-95 shadow-md">Load Training Elements</button>
+<body class="bg-gray-900 text-white p-6">
+    <div id="onboarding" class="text-center p-10 bg-gray-800 rounded-xl">
+        <button onclick="loadApp()" class="px-8 py-4 bg-green-600 rounded-lg font-bold">Load Training Elements</button>
+    </div>
+
+    <div id="app" class="hidden max-w-lg mx-auto bg-gray-800 p-6 rounded-xl space-y-4">
+        <h2 id="verse-title" class="text-xl font-bold text-green-400"></h2>
+        <p id="eng-text" class="text-sm italic text-gray-400"></p>
+        <p id="tl-text" class="text-2xl font-black"></p>
+        <p id="pho-text" class="text-xs text-amber-500 font-mono"></p>
+        
+        <button id="speak-btn" onclick="runAudio()" class="w-full py-4 bg-green-700 rounded-lg font-bold">🔊 Speak Phrase</button>
+        <div class="grid grid-cols-2 gap-2">
+            <button onclick="resetReps()" class="py-2 bg-red-900 rounded-lg">Reset</button>
+            <button onclick="nextStep()" class="py-2 bg-blue-900 rounded-lg">Good</button>
         </div>
-        <div id="lesson-screen" class="w-full max-w-3xl bg-gray-800 border-2 border-gray-700 p-6 rounded-2xl shadow-2xl space-y-4 hidden">
-            <div class="flex justify-between text-xs font-mono text-gray-400">
-                <span id="deck-position" class="font-bold text-gray-300">Loading...</span>
-                <span id="rep-counter" class="text-amber-400 font-black">Reps: 0 / 3</span>
-            </div>
-            <div id="frame-part1" class="p-4 rounded-xl border border-gray-700 space-y-2">
-                <p id="tl-part1" class="text-lg font-black text-white"></p>
-                <p id="pho-part1" class="text-xs text-amber-500 font-mono"></p>
-            </div>
-            <div class="text-center bg-gray-900 p-5 rounded-xl border border-gray-700 space-y-3">
-                <button id="audio-trigger-btn" onclick="triggerAudioVerification()" class="w-full py-4 bg-green-600 text-white font-black rounded-xl">🔊 Speak Model Phrase</button>
-                <div id="feedback-display" class="hidden text-xs font-mono border-t border-gray-800 pt-2">
-                    <p id="mic-heard-text" class="text-gray-300 italic">"Waiting..."</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="handleEvaluation(false)" class="py-3 bg-red-950 border border-red-700 text-red-300 font-bold rounded-xl">Reset</button>
-                <button onclick="handleEvaluation(true)" class="py-3 bg-green-950 border border-green-700 text-green-300 font-bold rounded-xl">Good</button>
-            </div>
-        </div>
-    </main>
+    </div>
+
     <script>
-        const MASTER_DECK = [
-            { id: "p35a", verse: "Proverbs 3:5 (Part A)", filipinoFull: "Magtiwala ka sa Panginoon nang buong puso mo", phonetic: "Mag-ti-wala ka sa Pa-ngi-no-on nang bu-ong pu-so mo", textMatch: "magtiwala ka sa panginoon nang buong puso mo" },
-            { id: "p35b", verse: "Proverbs 3:5 (Part B)", filipinoFull: "at huwag kang manalig sa iyong sariling pagkaunawa", phonetic: "at hoo-wag kahng mah-nah-lig sa ee-yong sah-ri-ling pahg-kah-oo-nah-wah", textMatch: "at huwag kang manalig sa iyong sariling pagkaunawa" }
+        const DECK = [
+            { v: "Proverbs 3:5 (Part A)", eng: "Trust in the Lord...", tl: "Magtiwala ka sa Panginoon nang buong puso mo", pho: "Mag-ti-wala ka sa Pa-ngi-no-on nang bu-ong pu-so mo" },
+            { v: "Proverbs 3:5 (Part B)", eng: "Lean not on your own understanding", tl: "huwag kang manalig sa iyong sariling pagkaunawa", pho: "hoo-wag kahng mah-nah-lig sa ee-yong sah-ri-ling pahg-kah-oo-nah-wah" }
         ];
-        let state = { deckIndex: 0, repCount: 0, recognition: null };
-        function initEngine() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            state.recognition = new SpeechRecognition();
-            state.recognition.lang = 'tl-PH';
-            state.recognition.onresult = (e) => { processSpeechInput(e.results[0][0].transcript.toLowerCase()); };
-            document.getElementById('onboarding-screen').classList.add('hidden');
-            document.getElementById('lesson-screen').classList.remove('hidden');
-            renderInterface();
+        let idx = 0;
+        function loadApp() { document.getElementById('onboarding').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); updateUI(); }
+        function updateUI() { 
+            document.getElementById('verse-title').innerText = DECK[idx].v;
+            document.getElementById('eng-text').innerText = DECK[idx].eng;
+            document.getElementById('tl-text').innerText = DECK[idx].tl;
+            document.getElementById('pho-text').innerText = DECK[idx].pho;
         }
-        function renderInterface() {
-            const card = MASTER_DECK[state.deckIndex];
-            document.getElementById('deck-position').innerText = card.verse;
-            document.getElementById('tl-part1').innerText = card.filipinoFull;
-            document.getElementById('pho-part1').innerText = card.phonetic;
-        }
-        function triggerAudioVerification() {
-            const card = MASTER_DECK[state.deckIndex];
-            const msg = new SpeechSynthesisUtterance(card.filipinoFull);
+        function runAudio() { 
+            const msg = new SpeechSynthesisUtterance(DECK[idx].tl);
             msg.lang = 'tl-PH';
             window.speechSynthesis.speak(msg);
-            setTimeout(() => { state.recognition.start(); }, 1500);
         }
-        function processSpeechInput(text) {
-            document.getElementById('feedback-display').classList.remove('hidden');
-            document.getElementById('mic-heard-text').innerText = `Heard: "${text}"`;
-            state.repCount++;
-            document.getElementById('rep-counter').innerText = `Reps: ${state.repCount} / 3`;
-        }
-        function handleEvaluation(good) {
-            if (good && state.repCount >= 3) {
-                state.deckIndex = (state.deckIndex + 1) % MASTER_DECK.length;
-                state.repCount = 0;
-                document.getElementById('rep-counter').innerText = `Reps: 0 / 3`;
-                renderInterface();
-            } else { state.repCount = 0; document.getElementById('rep-counter').innerText = `Reps: 0 / 3`; }
-        }
+        function nextStep() { idx = (idx + 1) % DECK.length; updateUI(); }
+        function resetReps() { updateUI(); }
     </script>
 </body>
 </html>
