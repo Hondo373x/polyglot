@@ -3,72 +3,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Polyglot SRS Trainer</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyglot - 3 Cup Language Engine</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --success: #34a853;
+            --bg: #f8f9fa;
+            --text: #202124;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Persistent Word Intro Area */
+        #persistent-intro {
+            width: 100%;
+            max-width: 600px;
+            background: #fff;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 15px;
+            text-align: center;
+            box-sizing: border-box;
+            display: none;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .view-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .hotspot-container {
+            position: relative;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+        }
+        .hotspot-container img {
+            width: 100%;
+            display: block;
+        }
+        .ring-pulse {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .btn-repeat { background: #5f6368; }
+        .highlight-caps { font-weight: bold; color: var(--primary); }
+    </style>
 </head>
-<body class="bg-gray-900 text-white p-6">
-    <div id="trainer" class="max-w-lg mx-auto bg-gray-800 p-8 rounded-xl text-center">
-        <h2 id="level-title" class="text-blue-400 font-bold mb-4">Select Level</h2>
-        <div id="display-area">
-            <h1 id="tl-text" class="text-3xl font-black mb-2">Select a Cup</h1>
-            <p id="pho-text" class="text-amber-500 font-mono text-lg mb-6"></p>
-        </div>
-        
-        <button id="main-btn" onclick="startTraining()" class="w-full py-6 bg-green-600 rounded-lg font-bold text-xl">Start Rep 1</button>
-        <div id="progress" class="mt-4 text-xs text-gray-500 font-mono"></div>
+<body>
 
-        <div id="cup-selector" class="grid grid-cols-3 gap-4 mt-8">
-            <button onclick="setLevel(0)" class="p-4 bg-blue-900 rounded-lg">Cup 1</button>
-            <button onclick="setLevel(1)" class="p-4 bg-blue-900 rounded-lg">Cup 2</button>
-            <button onclick="setLevel(2)" class="p-4 bg-blue-900 rounded-lg">Cup 3</button>
+    <!-- Persistent Header for Cup 3 / New Word Intro -->
+    <div id="persistent-intro">
+        <h3 style="margin:0 0 5px 0;">New Word Tracker</h3>
+        <div id="intro-word-details" style="font-size:18px;"></div>
+        <button class="btn" style="padding:5px 10px; font-size:12px;" onclick="speakIntro()">🔊 Listen</button>
+    </div>
+
+    <div class="app-container">
+        <!-- View 1: Three Cup Drilling View -->
+        <div id="drill-view" class="view-card">
+            <h2 id="display-english" style="color:#5f6368;"></h2>
+            <h1 id="display-target" style="font-size:36px; margin: 10px 0;"></h1>
+            <h3 id="display-phonetic" style="color: #1a73e8; font-style: italic;"></h3>
+            <div id="status-bubble" style="margin:20px 0; font-weight:bold;"></div>
+            <button id="action-btn" class="btn" onclick="handleDrillAction()">Start Drill</button>
+        </div>
+
+        <!-- View 2: Interactive POV Hotspot View -->
+        <div id="hotspot-view" class="hotspot-container">
+            <img id="pov-image" src="" alt="POV Situation">
+            <!-- Pulsing rings are dynamically injected here via JS -->
+        </div>
+
+        <!-- System Controls Switcher -->
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="btn btn-repeat" onclick="switchMethod('drill')">3-Cup Drill</button>
+            <button class="btn btn-repeat" onclick="switchMethod('hotspot')">POV Hotspots</button>
         </div>
     </div>
 
-    <script>
-        const LEVELS = [
-            { id: 'l1', title: "Going", tl: "Pupunta", pho: "Poo-poon-tah" },
-            { id: 'l2', title: "Going Home", tl: "Pupunta ako sa bahay", pho: "Poo-poon-tah ah-koh sah bah-high" },
-            { id: 'l3', title: "Are you going home?", tl: "Pupunta ka ba sa bahay?", pho: "Poo-poon-tah kah bah sah bah-high?" }
-        ];
-
-        let currentIdx = 0;
-        let rep = 1;
-
-        function setLevel(idx) {
-            currentIdx = idx;
-            rep = 1;
-            const data = JSON.parse(localStorage.getItem(LEVELS[idx].id)) || { reps: 0, lastSeen: 'Never' };
-            document.getElementById('level-title').innerText = LEVELS[idx].title;
-            document.getElementById('tl-text').innerText = LEVELS[idx].tl;
-            document.getElementById('pho-text').innerText = LEVELS[idx].pho;
-            document.getElementById('progress').innerText = `Progress: ${data.reps} total reps. Last: ${data.lastSeen}`;
-        }
-
-        async function startTraining() {
-            if (rep > 3) return;
-            const phrase = LEVELS[currentIdx].tl;
-            const msg = new SpeechSynthesisUtterance(phrase);
-            msg.lang = 'tl-PH';
-            window.speechSynthesis.speak(msg);
-            
-            msg.onend = () => {
-                const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-                recog.lang = 'tl-PH';
-                recog.start();
-                recog.onresult = (e) => {
-                    if (e.results[0][0].transcript.toLowerCase().includes(phrase.split(' ')[0].toLowerCase())) {
-                        rep++;
-                        let data = JSON.parse(localStorage.getItem(LEVELS[currentIdx].id)) || { reps: 0 };
-                        data.reps++;
-                        data.lastSeen = new Date().toLocaleDateString();
-                        localStorage.setItem(LEVELS[currentIdx].id, JSON.stringify(data));
-                        
-                        document.getElementById('progress').innerText = `Saved! Total Reps: ${data.reps}`;
-                        document.getElementById('main-btn').innerText = rep <= 3 ? `Correct! Start Rep ${rep}` : "Level Complete!";
-                    }
-                };
-            };
-        }
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
