@@ -9,8 +9,9 @@
         body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .app-container { width: 100%; max-width: 600px; }
         .view-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        .btn-repeat { background: #5f6368; font-size: 13px; padding: 8px 12px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; display: inline-block; }
+        .btn-structure { background: #5f6368; font-size: 14px; padding: 10px 14px; color: white; border: none; border-radius: 6px; cursor: pointer; margin: 5px; font-weight: bold; }
+        .btn-structure:hover { background: #414447; }
         #structure-selector-container { display: flex; flex-wrap: wrap; justify-content: center; background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
 </head>
@@ -18,23 +19,120 @@
 
     <div class="app-container">
         <h3 style="text-align: center; margin-bottom: 5px;">Select Active Track Structure:</h3>
-        <div id="structure-selector-container"></div>
-
-        <div id="drill-view" class="view-card">
-            <h2 id="display-english" style="color:#5f6368; font-weight: normal; margin: 0;"></h2>
-            <h1 id="display-target" style="font-size: 42px; margin: 15px 0; color: #202124;"></h1>
-            <h3 id="display-phonetic" style="color: var(--primary); font-style: italic; margin: 0 0 20px 0; font-weight: normal;"></h3>
-            
-            <div id="status-bubble" style="background: #e8f0fe; padding: 12px; border-radius: 8px; font-weight: bold; color: #1967d2;"></div>
-            <button id="action-btn" class="btn" onclick="handleNextAction()">Next</button>
+        <div id="structure-selector-container">
+            <button class="btn-structure" onclick="selectStructure('structure1')">Structure 1: Verb Intro</button>
+            <button class="btn-structure" onclick="selectStructure('structure2')">Structure 2: Cup 1</button>
+            <button class="btn-structure" onclick="selectStructure('structure3')">Structure 3: Cup 2</button>
+            <button class="btn-structure" onclick="selectStructure('structure4')">Structure 4: Cup 3 Intro</button>
+            <button class="btn-structure" onclick="selectStructure('structure5')">Structure 5: Cup 3</button>
         </div>
 
-        <div id="hotspot-view" class="view-card" style="display:none;">
-            <h3>POV Interactive Matrix Placeholder</h3>
-            <p>Ready to activate layout components.</p>
+        <div id="drill-view" class="view-card">
+            <h2 id="display-english" style="color:#5f6368; font-weight: normal; margin: 0;">Select a structure above to start</h2>
+            <h1 id="display-target" style="font-size: 42px; margin: 15px 0; color: #202124;">---</h1>
+            <h3 id="display-phonetic" style="color: var(--primary); font-style: italic; margin: 0 0 20px 0; font-weight: normal;"></h3>
+            
+            <div id="status-bubble" style="background: #e8f0fe; padding: 12px; border-radius: 8px; font-weight: bold; color: #1967d2; margin-bottom: 15px;">System Ready.</div>
+            <button id="action-btn" class="btn" style="display: none;" onclick="handleNextAction()">Next</button>
         </div>
     </div>
 
+    <script>
+        const lessonData = {
+            structure1: { target: "Uuwi", phonetic: "oo-OO-wee", english: "Going home (Verb)" },
+            structure2: { target: "Uuwi ako.", phonetic: "oo-OO-wee ah-KOH", english: "I am going home. (Statement)" },
+            structure3: { target: "Uuwi ka ba?", phonetic: "oo-OO-wee kah bah", english: "Are you going home? (Yes/No Question)" },
+            structure4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+            structure5: { target: "Saan ka pupunta?", phonetic: "sah-AHN kah poo-POON-tah", english: "Where are you going? (Open Question)" }
+        };
+
+        let currentStructureKey = "";
+        let currentRep = 1;
+        const totalReps = 2;
+
+        const synth = window.speechSynthesis;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+        function selectStructure(key) {
+            currentStructureKey = key;
+            currentRep = 1;
+            runStructureSequence();
+        }
+
+        async function speak(text) {
+            return new Promise((resolve) => {
+                synth.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Attempt to auto-select native Filipino audio voice if available
+                const voices = synth.getVoices();
+                const flVoice = voices.find(v => v.lang.includes('tl') || v.lang.includes('PH'));
+                if (flVoice) utterance.voice = flVoice;
+                
+                utterance.rate = 0.65; // Deliberate pace
+                utterance.onend = () => resolve();
+                utterance.onerror = () => resolve(); // Don't hang up if speech audio fails
+                synth.speak(utterance);
+            });
+        }
+
+        async function runStructureSequence() {
+            const data = lessonData[currentStructureKey];
+            if (!data) return;
+
+            document.getElementById('display-english').innerText = data.english;
+            document.getElementById('display-target').innerText = data.target;
+            document.getElementById('display-phonetic').innerText = data.phonetic;
+            document.getElementById('action-btn').style.display = "none";
+            
+            document.getElementById('status-bubble').innerText = `🔊 Playing Audio (Repetition ${currentRep}/${totalReps})...`;
+
+            // Step 1 & 2: Say it out loud twice automatically
+            await speak(data.target);
+            await new Promise(r => setTimeout(r, 500));
+            await speak(data.target);
+
+            // Step 3: Trigger input check
+            document.getElementById('status-bubble').innerText = "🎤 Your turn! Repeat the phrase out loud.";
+            
+            if (recognition) {
+                try {
+                    recognition.start();
+                    recognition.onresult = (event) => {
+                        const spokenText = event.results[0][0].transcript;
+                        document.getElementById('status-bubble').innerText = `Heard: "${spokenText}"`;
+                        showNextButton();
+                    };
+                    recognition.onerror = () => showNextButton();
+                } catch(e) {
+                    showNextButton();
+                }
+            } else {
+                showNextButton();
+            }
+        }
+
+        function showNextButton() {
+            const actionBtn = document.getElementById('action-btn');
+            actionBtn.style.display = "inline-block";
+            if (currentRep < totalReps) {
+                actionBtn.innerText = `Proceed to Repetition ${currentRep + 1}`;
+            } else {
+                actionBtn.innerText = "Structure Complete";
+            }
+        }
+
+        function handleNextAction() {
+            if (currentRep < totalReps) {
+                currentRep++;
+                runStructureSequence();
+            } else {
+                document.getElementById('status-bubble').innerText = "Done! Select another structure from the top menu.";
+                document.getElementById('action-btn').style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
 
