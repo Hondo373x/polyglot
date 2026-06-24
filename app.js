@@ -1,37 +1,46 @@
-// Database of High-Frequency Units
-const lessonDatabase = {
-    lesson1: {
-        verbRoot: "uwi",
-        cup1: { english: "I am going home.", target: "Uuwi ako.", phonetic: "oo-OO-wee ah-KOH" },
-        cup2: { english: "Are you going home?", target: "Uuwi ka ba?", phonetic: "oo-OO-wee kah bah" },
-        cup3: { introWord: "Saan (Where)", introPhonetic: "sah-AHN", english: "Where are you going?", target: "Saan ka pupunta?", phonetic: "sah-AHN kah poo-POON-tah" },
-        hotspots: [
-            { id: "cup1", top: "70%", left: "45%", color: "#ea4335" }, // Path/Home target
-            { id: "cup2", top: "35%", left: "65%", color: "#4285f4" }  // Person target
-        ]
-    }
+// Complete Database Organized by Structure 1 through 5
+const lessonData = {
+    structure1: { type: "intro", title: "Structure 1: Verb Intro", target: "Uuwi", phonetic: "oo-OO-wee", english: "Going home" },
+    structure2: { type: "cup1",  title: "Structure 2: Cup 1 (Statement)", target: "Uuwi ako.", phonetic: "oo-OO-wee ah-KOH", english: "I am going home." },
+    structure3: { type: "cup2",  title: "Structure 3: Cup 2 (Yes/No)", target: "Uuwi ka ba?", phonetic: "oo-OO-wee kah bah", english: "Are you going home?" },
+    structure4: { type: "intro", title: "Structure 4: Cup 3 Word Intro", target: "Saan", phonetic: "sah-AHN", english: "Where" },
+    structure5: { type: "cup3",  title: "Structure 5: Cup 3 (Open Question)", target: "Saan ka pupunta?", phonetic: "sah-AHN kah poo-POON-tah", english: "Where are you going?" }
 };
 
-let currentLesson = lessonDatabase.lesson1;
+let currentStructureKey = "structure1";
 let currentRep = 1;
-let currentCup = 1;
-let isListening = false;
+const totalReps = 2; // Fixed to 2 repetitions per your rule
 
-// Chrome OS and Android Native Speech Synthesis Configuration
 const synth = window.speechSynthesis;
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = SpeechRecognition ? new SpeechRecognition() : null;
 
-if (recognition) {
-    recognition.continuous = false;
-    recognition.interimResults = false;
+// Build Structure Menu on launch so you can pick exactly where to start
+function initStructureMenu() {
+    const container = document.getElementById('structure-selector-container');
+    container.innerHTML = ""; // Clear
+    
+    Object.keys(lessonData).forEach(key => {
+        const btn = document.createElement('button');
+        btn.className = "btn btn-repeat";
+        btn.style.margin = "5px";
+        btn.innerText = lessonData[key].title;
+        btn.onclick = () => selectStructure(key);
+        container.appendChild(btn);
+    });
 }
 
-function speak(text, rate = 1.0) {
+function selectStructure(key) {
+    currentStructureKey = key;
+    currentRep = 1;
+    document.getElementById('status-bubble').innerText = `Selected ${lessonData[key].title}. Ready to start.`;
+    runStructureSequence();
+}
+
+async function speak(text, rate = 0.7) {
     return new Promise((resolve) => {
-        synth.cancel(); // Clear queue
+        synth.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        // Look for native Filipino voice on Android/ChromeOS, default to standard if missing
         const voices = synth.getVoices();
         const flVoice = voices.find(v => v.lang.includes('tl') || v.lang.includes('PH'));
         if (flVoice) utterance.voice = flVoice;
@@ -41,103 +50,73 @@ function speak(text, rate = 1.0) {
     });
 }
 
-// Executes the exact multi-stage audio loop you detailed
-async function runDrillSequence() {
-    const data = currentCup === 1 ? currentLesson.cup1 : currentCup === 2 ? currentLesson.cup2 : currentLesson.cup3;
+// Executes the exact audio rules for the active structure
+async function runStructureSequence() {
+    const data = lessonData[currentStructureKey];
     
-    // Manage Cup 3 persistent header state
-    if (currentCup === 3 && data.introWord) {
-        document.getElementById('persistent-intro').style.display = 'block';
-        document.getElementById('intro-word-details').innerText = `${data.introWord} - ${data.introPhonetic}`;
-    } else {
-        document.getElementById('persistent-intro').style.display = 'none';
-    }
-
-    // Step 1: English Intro
+    // UI Updates
     document.getElementById('display-english').innerText = data.english;
-    document.getElementById('display-target').innerText = "";
-    document.getElementById('display-phonetic').innerText = "";
-    await speak(data.english, 1.0);
-
-    // Step 2: Target Language Slowly
     document.getElementById('display-target').innerText = data.target;
-    await speak(data.target, 0.6); // Dropped rate for "very slowly"
-
-    // Step 3: Phonetic Spelling Exposure
     document.getElementById('display-phonetic').innerText = data.phonetic;
-    await speak(data.target, 0.5);
+    document.getElementById('action-btn').style.display = "none"; // Hide button during speech
+    
+    document.getElementById('status-bubble').innerText = `🔊 Playing Audio (Repetition ${currentRep}/${totalReps})...`;
 
-    // Step 4: Voice Capture Performance Check
-    startListeningLoop(data);
-}
+    // Rule: Say it out loud TWICE before the user repeats
+    await speak(data.target, 0.7);
+    await new Promise(r => setTimeout(r, 400)); // Short natural breath pause
+    await speak(data.target, 0.7);
 
-function startListeningLoop(data) {
-    if (!recognition) {
-        document.getElementById('status-bubble').innerText = "Mic registration error. Tap to force next rep.";
-        document.getElementById('action-btn').innerText = "Force Next Rep";
-        return;
+    // Prompt user to repeat
+    document.getElementById('status-bubble').innerText = "🎤 Your turn! Repeat the phrase out loud.";
+    
+    if (recognition) {
+        recognition.start();
+        recognition.onresult = (event) => {
+            const spokenText = event.results[0][0].transcript;
+            document.getElementById('status-bubble').innerText = `Heard: "${spokenText}"`;
+            prepareNextInteraction();
+        };
+        recognition.onerror = () => {
+            prepareNextInteraction(); // Don't freeze the UI if mic times out
+        };
+    } else {
+        prepareNextInteraction();
     }
-
-    document.getElementById('status-bubble').innerText = "🎤 Listening... Speak Filipino then English";
-    recognition.start();
-
-    recognition.onresult = async (event) => {
-        const resultText = event.results[0][0].transcript;
-        document.getElementById('status-bubble').innerText = `You said: "${resultText}"`;
-        
-        // Step 5: Direct Feedback Loop with Immediate Automation
-        await speak("Excellent pronunciation tracker matched. Moving on.", 1.0);
-        
-        if (currentRep < 3) {
-            currentRep++;
-            runDrillSequence(); // Automatic loop transition with no pause
-        } else {
-            document.getElementById('status-bubble').innerText = `Cup ${currentCup} complete. Use choice options below.`;
-            document.getElementById('action-btn').innerText = "Restart Drill Module";
-            currentRep = 1; // Reset tracking loop
-        }
-    };
 }
 
-function speakIntro() {
-    if (currentLesson.cup3.introWord) speak(currentLesson.cup3.introWord.split(" ")[0], 0.6);
+function prepareNextInteraction() {
+    const actionBtn = document.getElementById('action-btn');
+    actionBtn.style.display = "inline-block";
+    
+    if (currentRep < totalReps) {
+        actionBtn.innerText = `Proceed to Repetition ${currentRep + 1}`;
+    } else {
+        actionBtn.innerText = "Structure Finished! Pick Next Structure Above";
+    }
 }
 
-function handleDrillAction() {
-    currentRep = 1;
-    runDrillSequence();
+function handleNextAction() {
+    if (currentRep < totalReps) {
+        currentRep++;
+        runStructureSequence();
+    } else {
+        document.getElementById('status-bubble').innerText = "Please select the next structure from the top menu.";
+    }
 }
 
+// Layout Switcher logic for future methods
 function switchMethod(method) {
     if (method === 'drill') {
         document.getElementById('drill-view').style.display = 'block';
         document.getElementById('hotspot-view').style.display = 'none';
-    } else {
+    } else if (method === 'hotspot') {
         document.getElementById('drill-view').style.display = 'none';
-        const hView = document.getElementById('hotspot-view');
-        hView.style.display = 'block';
-        
-        // Inject image and positioning anchors dynamically
-        document.getElementById('pov-image').src = "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600"; // Fallback placeholder asset
-        hView.querySelectorAll('.ring-pulse').forEach(el => el.remove());
-        
-        currentLesson.hotspots.forEach(spot => {
-            const ring = document.createElement('div');
-            ring.className = 'ring-pulse';
-            ring.style.top = spot.top;
-            ring.style.left = spot.left;
-            ring.style.backgroundColor = spot.color;
-            ring.onclick = () => {
-                currentCup = spot.id === 'cup1' ? 1 : 2;
-                switchMethod('drill');
-                runDrillSequence();
-            };
-            hView.appendChild(ring);
-        });
+        document.getElementById('hotspot-view').style.display = 'block';
     }
 }
 
-// Kickstart deployment state
 window.onload = () => {
-    document.getElementById('display-english').innerText = "Ready to start Lesson 1.";
+    initStructureMenu();
+    selectStructure("structure1"); // Default entry point
 };
