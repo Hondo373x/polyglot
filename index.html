@@ -1,56 +1,69 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Polyglot Training Loop</title>
+    <title>Polyglot SRS Trainer</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-900 text-white p-6">
     <div id="trainer" class="max-w-lg mx-auto bg-gray-800 p-8 rounded-xl text-center">
-        <!-- Persistent Display -->
-        <h2 id="eng-text" class="text-gray-400 italic text-xl mb-2">I am going home</h2>
-        <h1 id="tl-text" class="text-4xl font-black text-white mb-2">Pupunta ako sa bahay</h1>
-        <p id="pho-text" class="text-amber-500 font-mono text-lg mb-8">Poo-poon-tah ah-koh sah bah-high</p>
+        <h2 id="level-title" class="text-blue-400 font-bold mb-4">Select Level</h2>
+        <div id="display-area">
+            <h1 id="tl-text" class="text-3xl font-black mb-2">Select a Cup</h1>
+            <p id="pho-text" class="text-amber-500 font-mono text-lg mb-6"></p>
+        </div>
+        
+        <button id="main-btn" onclick="startTraining()" class="w-full py-6 bg-green-600 rounded-lg font-bold text-xl">Start Rep 1</button>
+        <div id="progress" class="mt-4 text-xs text-gray-500 font-mono"></div>
 
-        <!-- Status and Feedback -->
-        <div id="status" class="text-blue-400 font-bold mb-4">Repetition 1 of 3</div>
-        <button id="btn" onclick="startLoop()" class="w-full py-6 bg-green-600 rounded-lg font-bold text-xl">Start Training</button>
+        <div id="cup-selector" class="grid grid-cols-3 gap-4 mt-8">
+            <button onclick="setLevel(0)" class="p-4 bg-blue-900 rounded-lg">Cup 1</button>
+            <button onclick="setLevel(1)" class="p-4 bg-blue-900 rounded-lg">Cup 2</button>
+            <button onclick="setLevel(2)" class="p-4 bg-blue-900 rounded-lg">Cup 3</button>
+        </div>
     </div>
 
     <script>
+        const LEVELS = [
+            { id: 'l1', title: "Going", tl: "Pupunta", pho: "Poo-poon-tah" },
+            { id: 'l2', title: "Going Home", tl: "Pupunta ako sa bahay", pho: "Poo-poon-tah ah-koh sah bah-high" },
+            { id: 'l3', title: "Are you going home?", tl: "Pupunta ka ba sa bahay?", pho: "Poo-poon-tah kah bah sah bah-high?" }
+        ];
+
+        let currentIdx = 0;
         let rep = 1;
-        const phrase = "pupunta ako sa bahay";
-        
-        async function startLoop() {
+
+        function setLevel(idx) {
+            currentIdx = idx;
+            rep = 1;
+            const data = JSON.parse(localStorage.getItem(LEVELS[idx].id)) || { reps: 0, lastSeen: 'Never' };
+            document.getElementById('level-title').innerText = LEVELS[idx].title;
+            document.getElementById('tl-text').innerText = LEVELS[idx].tl;
+            document.getElementById('pho-text').innerText = LEVELS[idx].pho;
+            document.getElementById('progress').innerText = `Progress: ${data.reps} total reps. Last: ${data.lastSeen}`;
+        }
+
+        async function startTraining() {
             if (rep > 3) return;
-            
-            document.getElementById('status').innerText = "Repetition " + rep + " of 3: Listening...";
-            
-            // 1. Browser speaks the phrase
+            const phrase = LEVELS[currentIdx].tl;
             const msg = new SpeechSynthesisUtterance(phrase);
             msg.lang = 'tl-PH';
             window.speechSynthesis.speak(msg);
             
-            // 2. Wait for audio to finish, then listen
             msg.onend = () => {
                 const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
                 recog.lang = 'tl-PH';
                 recog.start();
                 recog.onresult = (e) => {
-                    let heard = e.results[0][0].transcript.toLowerCase();
-                    if (heard.includes("pupunta") || heard.includes("bahay")) {
+                    if (e.results[0][0].transcript.toLowerCase().includes(phrase.split(' ')[0].toLowerCase())) {
                         rep++;
-                        if(rep <= 3) {
-                            document.getElementById('status').innerText = "Correct! Get ready for Rep " + rep;
-                            setTimeout(startLoop, 2000);
-                        } else {
-                            document.getElementById('status').innerText = "Complete! Great job.";
-                            document.getElementById('btn').innerText = "Restart";
-                            document.getElementById('btn').onclick = () => location.reload();
-                        }
-                    } else {
-                        document.getElementById('status').innerText = "Try again. You said: " + heard;
+                        let data = JSON.parse(localStorage.getItem(LEVELS[currentIdx].id)) || { reps: 0 };
+                        data.reps++;
+                        data.lastSeen = new Date().toLocaleDateString();
+                        localStorage.setItem(LEVELS[currentIdx].id, JSON.stringify(data));
+                        
+                        document.getElementById('progress').innerText = `Saved! Total Reps: ${data.reps}`;
+                        document.getElementById('main-btn').innerText = rep <= 3 ? `Correct! Start Rep ${rep}` : "Level Complete!";
                     }
                 };
             };
