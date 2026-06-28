@@ -27,8 +27,18 @@
             <button class="btn-structure" onclick="selectStructure('structure4')">Structure 4: Cup 3 Intro</button>
             <button class="btn-structure" onclick="selectStructure('structure5')">Structure 5: Cup 3</button>
         </div>
-
-        <div id="drill-view" class="view-card">
+<select id="lesson-picker" onchange="changeLesson(this.value)" style="margin-bottom: 15px; padding: 5px; font-weight: bold;">
+    <option value="lesson1">Lesson 1: Pumunta</option>
+    <option value="lesson2">Lesson 2: Bumili</option>
+    <option value="lesson3">Lesson 3: Nagsalita</option>
+    <option value="lesson4">Lesson 4: Kailangan</option>
+    <option value="lesson5">Lesson 5: Gusto</option>
+    <option value="lesson6">Lesson 6: Kumain</option>
+    <option value="lesson7">Lesson 7: Nagtrabaho</option>
+    <option value="lesson8">Lesson 8: Tumingin</option>
+    <option value="lesson9">Lesson 9: Naiintindihan</option>
+    <option value="lesson10">Lesson 10: Tutulong</option>
+</select>        <div id="drill-view" class="view-card">
             <h2 id="display-english" style="color:#5f6368; font-weight: normal; margin: 0;">Select a structure above to start</h2>
             <h1 id="display-target" style="font-size: 42px; margin: 15px 0; color: #202124;">---</h1>
             <h3 id="display-phonetic" style="color: var(--primary); font-style: italic; margin: 0 0 20px 0; font-weight: normal;"></h3>
