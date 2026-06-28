@@ -8,42 +8,53 @@
     <style>
         :root { --primary: #1a73e8; --bg: #f8f9fa; --text: #202124; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .app-container { width: 100%; max-width: 700px; }
+        .app-container { width: 100%; max-width: 750px; }
         .view-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; }
         .btn { background: var(--primary); color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; display: inline-block; }
         
-        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .btn-cup { background: #5f6368; color: white; border: none; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 75px; transition: background 0.2s; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .btn-cup { background: #5f6368; color: white; border: none; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 85px; transition: background 0.2s; }
         .btn-cup:hover { background: #414447; }
-        .btn-cup .label { font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: #ffbc00; margin-bottom: 4px; }
-        .btn-cup .target-preview { font-size: 14px; font-weight: bold; word-break: break-word; }
+        .btn-cup .label { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: #ffbc00; margin-bottom: 4px; }
+        .btn-cup .target-preview { font-size: 13px; font-weight: bold; word-break: break-word; }
         
-        .selector-box { text-align: center; margin-bottom: 20px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        select { padding: 10px 16px; font-size: 16px; font-weight: bold; border-radius: 8px; border: 2px solid var(--primary); background: white; cursor: pointer; width: 100%; max-width: 300px; }
+        .selector-box { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .control-group { display: flex; flex-direction: column; text-align: left; }
+        .control-group label { font-weight: bold; margin-bottom: 6px; color: #5f6368; font-size: 14px; }
+        select { padding: 10px 16px; font-size: 15px; font-weight: bold; border-radius: 8px; border: 2px solid var(--primary); background: white; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <!-- 1. Lesson Selector Dropdown -->
+        <!-- 1. Control Parameters Selector Panel -->
         <div class="selector-box">
-            <label for="lesson-picker" style="font-weight: bold; display: block; margin-bottom: 8px; color: #5f6368;">Choose Active Lesson:</label>
-            <select id="lesson-picker" onchange="changeLesson(this.value)">
-                <option value="1">Lesson 1: Pumunta</option>
-                <option value="2">Lesson 2: Bumili</option>
-                <option value="3">Lesson 3: Nagsalita</option>
-                <option value="4">Lesson 4: Kailangan</option>
-                <option value="5">Lesson 5: Gusto</option>
-                <option value="6">Lesson 6: Kumain</option>
-                <option value="7">Lesson 7: Nagtrabaho</option>
-                <option value="8">Lesson 8: Tumingin</option>
-                <option value="9">Lesson 9: Naiintindihan</option>
-                <option value="10">Lesson 10: Tutulong</option>
-            </select>
+            <div class="control-group">
+                <label for="lesson-picker">Choose Active Lesson:</label>
+                <select id="lesson-picker" onchange="changeLesson(this.value)">
+                    <option value="1">Lesson 1: Pumunta (Go)</option>
+                    <option value="2">Lesson 2: Bumili (Buy)</option>
+                    <option value="3">Lesson 3: Nagsalita (Speak)</option>
+                    <option value="4">Lesson 4: Kailangan (Need)</option>
+                    <option value="5">Lesson 5: Gusto (Want)</option>
+                    <option value="6">Lesson 6: Kumain (Eat)</option>
+                    <option value="7">Lesson 7: Nagtrabaho (Work)</option>
+                    <option value="8">Lesson 8: Tumingin (Look)</option>
+                    <option value="9">Lesson 9: Naiintindihan (Understand)</option>
+                    <option value="10">Lesson 10: Tutulong (Help)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="branch-picker">Choose Vocabulary Branch Option:</label>
+                <select id="branch-picker" onchange="changeBranch(this.value)">
+                    <!-- Options load dynamically via Javascript setup based on active lesson selection -->
+                </select>
+            </div>
         </div>
 
-        <!-- 2. Dynamic L-Branded Icon Buttons -->
+        <!-- 2. Dynamic L-Branded Tracking Elements -->
         <div class="button-grid">
             <button class="btn-cup" onclick="selectStep('step1')">
                 <span class="label" id="label-s1">L1 Intro</span>
@@ -58,7 +69,7 @@
                 <span class="target-preview" id="preview-s3">...</span>
             </button>
             <button class="btn-cup" onclick="selectStep('step4')">
-                <span class="label" id="label-s4">L1 Cup 3 Intro</span>
+                <span class="label" id="label-s4">L1 Cup 3 In</span>
                 <span class="target-preview" id="preview-s4">...</span>
             </button>
             <button class="btn-cup" onclick="selectStep('step5')">
@@ -67,10 +78,10 @@
             </button>
         </div>
 
-        <!-- 3. Main Practice Display Card -->
+        <!-- 3. Primary Execution Deck -->
         <div id="drill-view" class="view-card">
             <h2 id="display-english" style="color:#5f6368; font-weight: normal; margin: 0; font-size: 16px;">Select an icon button above to start drill</h2>
-            <h1 id="display-target" style="font-size: 36px; margin: 15px 0; color: #202124;">---</h1>
+            <h1 id="display-target" style="font-size: 34px; margin: 15px 0; color: #202124;">---</h1>
             <h3 id="display-phonetic" style="color: var(--primary); font-style: italic; margin: 0 0 20px 0; font-weight: normal;"></h3>
             
             <div id="status-bubble" style="background: #e8f0fe; padding: 12px; border-radius: 8px; font-weight: bold; color: #1967d2; margin-bottom: 15px;">System Ready.</div>
@@ -79,81 +90,322 @@
     </div>
 
     <script>
-        // Database Matrix for Lessons 1-10
-        const lessonDatabase = {
+        // Branched Multi-Tier Database Matrix
+        const multiLessonMatrix = {
             "1": {
-                step1: { target: "Pumunta", phonetic: "poo-MOON-tah", english: "Go (Verb Intro)" },
-                step2: { target: "Pumunta ako sa bahay.", phonetic: "poo-MOON-tah ah-KOH sah bah-high", english: "I went to the house. (Statement)" },
-                step3: { target: "Pumunta ba ka sa bahay?", phonetic: "poo-MOON-tah bah kah sah bah-high", english: "Did you go to the house? (Yes/No Question)" },
-                step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan ka pumunta?", phonetic: "sah-AHN kah poo-MOON-tah?", english: "Where did you go? (Open Question)" }
+                branches: ["Core Phrases", "Market", "Office", "Restaurant"],
+                "Core Phrases": {
+                    step1: { target: "Pumunta", phonetic: "poo-MOON-tah", english: "Go (Verb Intro)" },
+                    step2: { target: "Pumunta ako sa bahay.", phonetic: "poo-MOON-tah ah-KOH sah bah-high", english: "I went to the house." },
+                    step3: { target: "Pumunta ba ka sa bahay?", phonetic: "poo-MOON-tah bah kah sah bah-high", english: "Did you go to the house?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka pumunta?", phonetic: "sah-AHN kah poo-MOON-tah?", english: "Where did you go?" }
+                },
+                "Market": {
+                    step1: { target: "Pumunta", phonetic: "poo-MOON-tah", english: "Go (Verb Intro)" },
+                    step2: { target: "Pumunta ako sa pamilihan.", phonetic: "poo-MOON-tah ah-KOH sah pah-mee-lee-hahn.", english: "I went to the market." },
+                    step3: { target: "Pumunta ba ka sa pamilihan?", phonetic: "poo-MOON-tah bah kah sah pah-mee-lee-hahn?", english: "Did you go to the market?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka pumunta sa pamilihan?", phonetic: "sah-AHN kah poo-MOON-tah sah pah-mee-lee-hahn?", english: "Where did you go to the market?" }
+                },
+                "Office": {
+                    step1: { target: "Pumunta", phonetic: "poo-MOON-tah", english: "Go (Verb Intro)" },
+                    step2: { target: "Pumunta ako sa opisina.", phonetic: "poo-MOON-tah ah-KOH sah oh-pee-see-nah.", english: "I went to the office." },
+                    step3: { target: "Pumunta ba ka sa opisina?", phonetic: "poo-MOON-tah bah kah sah oh-pee-see-nah?", english: "Did you go to the office?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka pumunta sa opisina?", phonetic: "sah-AHN kah poo-MOON-tah sah oh-pee-see-nah?", english: "Where did you go to the office?" }
+                },
+                "Restaurant": {
+                    step1: { target: "Pumunta", phonetic: "poo-MOON-tah", english: "Go (Verb Intro)" },
+                    step2: { target: "Pumunta ako sa restawran.", phonetic: "poo-MOON-tah ah-KOH sah res-tow-rahn.", english: "I went to the restaurant." },
+                    step3: { target: "Pumunta ba ka sa restawran?", phonetic: "poo-MOON-tah bah kah sah res-tow-rahn?", english: "Did you go to the restaurant?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka pumunta sa restawran?", phonetic: "sah-AHN kah poo-MOON-tah sah res-tow-rahn?", english: "Where did you go to the restaurant?" }
+                }
             },
             "2": {
-                step1: { target: "Bumili", phonetic: "boo-MEE-lee", english: "Buy (Verb Intro)" },
-                step2: { target: "Bumili ako nito.", phonetic: "boo-MEE-lee ah-KOH nee-TOH.", english: "I bought this. (Statement)" },
-                step3: { target: "Bumili ba ka nito?", phonetic: "boo-MEE-lee bah kah nee-TOH?", english: "Did you buy this? (Yes/No Question)" },
-                step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan ka bumili nito?", phonetic: "sah-AHN kah boo-MEE-lee nee-TOH?", english: "Where did you buy this? (Open Question)" }
+                branches: ["Core Phrases", "Ticket", "Milk", "Book"],
+                "Core Phrases": {
+                    step1: { target: "Bumili", phonetic: "boo-MEE-lee", english: "Buy (Verb Intro)" },
+                    step2: { target: "Bumili ako nito.", phonetic: "boo-MEE-lee ah-KOH nee-TOH.", english: "I bought this." },
+                    step3: { target: "Bumili ba ka nito?", phonetic: "boo-MEE-lee bah kah nee-TOH?", english: "Did you buy this?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka bumili nito?", phonetic: "sah-AHN kah boo-MEE-lee nee-TOH?", english: "Where did you buy this?" }
+                },
+                "Ticket": {
+                    step1: { target: "Bumili", phonetic: "boo-MEE-lee", english: "Buy (Verb Intro)" },
+                    step2: { target: "Bumili ako ng tiket.", phonetic: "boo-MEE-lee ah-KOH ng TEE-ket.", english: "I bought a ticket." },
+                    step3: { target: "Bumili ba ka ng tiket?", phonetic: "boo-MEE-lee bah kah ng TEE-ket?", english: "Did you buy a ticket?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka bumili ng tiket?", phonetic: "sah-AHN kah boo-MEE-lee ng TEE-ket?", english: "Where did you buy the ticket?" }
+                },
+                "Milk": {
+                    step1: { target: "Bumili", phonetic: "boo-MEE-lee", english: "Buy (Verb Intro)" },
+                    step2: { target: "Bumili ako ng gatas.", phonetic: "boo-MEE-lee ah-KOH ng GAH-tahs.", english: "I bought milk." },
+                    step3: { target: "Bumili ba ka ng gatas?", phonetic: "boo-MEE-lee bah kah ng GAH-tahs?", english: "Did you buy milk?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka bumili ng gatas?", phonetic: "sah-AHN kah boo-MEE-lee ng GAH-tahs?", english: "Where did you buy the milk?" }
+                },
+                "Book": {
+                    step1: { target: "Bumili", phonetic: "boo-MEE-lee", english: "Buy (Verb Intro)" },
+                    step2: { target: "Bumili ako ng libro.", phonetic: "boo-MEE-lee ah-KOH ng leeb-ROH.", english: "I bought a book." },
+                    step3: { target: "Bumili ba ka ng libro?", phonetic: "boo-MEE-lee bah kah ng leeb-ROH?", english: "Did you buy a book?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka bumili ng libro?", phonetic: "sah-AHN kah boo-MEE-lee ng leeb-ROH?", english: "Where did you buy the book?" }
+                }
             },
             "3": {
-                step1: { target: "Nagsalita", phonetic: "nahg-sah-lee-TAH", english: "Speak (Verb Intro)" },
-                step2: { target: "Nagsalita ako doon.", phonetic: "nahg-sah-lee-TAH ah-KOH dohn.", english: "I spoke there. (Statement)" },
-                step3: { target: "Nagsalita ba ka doon?", phonetic: "nahg-sah-lee-TAH bah kah dohn?", english: "Did you speak there? (Yes/No Question)" },
-                step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan ka nagsalita?", phonetic: "sah-AHN kah nahg-sah-lee-TAH?", english: "Where did you speak? (Open Question)" }
+                branches: ["Core Phrases", "Tagalog", "English", "Truth"],
+                "Core Phrases": {
+                    step1: { target: "Nagsalita", phonetic: "nahg-sah-lee-TAH", english: "Speak (Verb Intro)" },
+                    step2: { target: "Nagsalita ako doon.", phonetic: "nahg-sah-lee-TAH ah-KOH dohn.", english: "I spoke there." },
+                    step3: { target: "Nagsalita ba ka doon?", phonetic: "nahg-sah-lee-TAH bah kah dohn?", english: "Did you speak there?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagsalita?", phonetic: "sah-AHN kah nahg-sah-lee-TAH?", english: "Where did you speak?" }
+                },
+                "Tagalog": {
+                    step1: { target: "Nagsalita", phonetic: "nahg-sah-lee-TAH", english: "Speak (Verb Intro)" },
+                    step2: { target: "Nagsalita ako ng Tagalog.", phonetic: "nahg-sah-lee-TAH ah-KOH ng tah-GAH-lohg.", english: "I spoke Tagalog." },
+                    step3: { target: "Nagsalita ba ka ng Tagalog?", phonetic: "nahg-sah-lee-TAH bah kah ng tah-GAH-lohg?", english: "Did you speak Tagalog?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagsalita ng Tagalog?", phonetic: "sah-AHN kah nahg-sah-lee-TAH ng tah-GAH-lohg?", english: "Where did you speak Tagalog?" }
+                },
+                "English": {
+                    step1: { target: "Nagsalita", phonetic: "nahg-sah-lee-TAH", english: "Speak (Verb Intro)" },
+                    step2: { target: "Nagsalita ako ng Ingles.", phonetic: "nahg-sah-lee-TAH ah-KOH ng eeng-GLES.", english: "I spoke English." },
+                    step3: { target: "Nagsalita ba ka ng Ingles?", phonetic: "nahg-sah-lee-TAH bah kah ng eeng-GLES?", english: "Did you speak English?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagsalita ng Ingles?", phonetic: "sah-AHN kah nahg-sah-lee-TAH ng eeng-GLES?", english: "Where did you speak English?" }
+                },
+                "Truth": {
+                    step1: { target: "Nagsalita", phonetic: "nahg-sah-lee-TAH", english: "Speak (Verb Intro)" },
+                    step2: { target: "Nagsalita ako ng katotohanan.", phonetic: "nahg-sah-lee-TAH ah-KOH ng kah-toh-toh-HAH-nahn.", english: "I spoke the truth." },
+                    step3: { target: "Nagsalita ba ka ng katotohanan?", phonetic: "nahg-sah-lee-TAH bah kah ng kah-toh-toh-HAH-nahn?", english: "Did you speak the truth?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagsalita ng katotohanan?", phonetic: "sah-AHN kah nahg-sah-lee-TAH ng kah-toh-toh-HAH-nahn.", english: "Where did you speak the truth?" }
+                }
             },
             "4": {
-                step1: { target: "Kailangan", phonetic: "kah-ee-LAH-ngahn", english: "Need (Verb Intro)" },
-                step2: { target: "Kailangan ko nito.", phonetic: "kah-ee-LAH-ngahn koh nee-TOH.", english: "I need this. (Statement)" },
-                step3: { target: "Kailangan mo ba nito?", phonetic: "kah-ee-LAH-ngahn moh bah nee-TOH?", english: "Do you need this? (Yes/No Question)" },
-                structure4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan mo kailangan nito?", phonetic: "sah-AHN moh kah-ee-LAH-ngahn nee-TOH?", english: "Where do you need this? (Open Question)" }
+                branches: ["Core Phrases", "Help", "Water", "Money"],
+                "Core Phrases": {
+                    step1: { target: "Kailangan", phonetic: "kah-ee-LAH-ngahn", english: "Need (Verb Intro)" },
+                    step2: { target: "Kailangan ko nito.", phonetic: "kah-ee-LAH-ngahn koh nee-TOH.", english: "I need this." },
+                    step3: { target: "Kailangan mo ba nito?", phonetic: "kah-ee-LAH-ngahn moh bah nee-TOH?", english: "Do you need this?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo kailangan nito?", phonetic: "sah-AHN moh kah-ee-LAH-ngahn nee-TOH?", english: "Where do you need this?" }
+                },
+                "Help": {
+                    step1: { target: "Kailangan", phonetic: "kah-ee-LAH-ngahn", english: "Need (Verb Intro)" },
+                    step2: { target: "Kailangan ko ng tulong.", phonetic: "kah-ee-LAH-ngahn koh ng TOO-lohng.", english: "I need help." },
+                    step3: { target: "Kailangan mo ba ng tulong?", phonetic: "kah-ee-LAH-ngahn moh bah ng TOO-lohng?", english: "Do you need help?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo kailangan ng tulong?", phonetic: "sah-AHN moh kah-ee-LAH-ngahn ng TOO-lohng?", english: "Where do you need help?" }
+                },
+                "Water": {
+                    step1: { target: "Kailangan", phonetic: "kah-ee-LAH-ngahn", english: "Need (Verb Intro)" },
+                    step2: { target: "Kailangan ko ng tubig.", phonetic: "kah-ee-LAH-ngahn koh ng TOO-beeg.", english: "I need water." },
+                    step3: { target: "Kailangan mo ba ng tubig?", phonetic: "kah-ee-LAH-ngahn moh bah ng TOO-beeg?", english: "Do you need water?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo kailangan ng tubig?", phonetic: "sah-AHN moh kah-ee-LAH-ngahn ng TOO-beeg?", english: "Where do you need water?" }
+                },
+                "Money": {
+                    step1: { target: "Kailangan", phonetic: "kah-ee-LAH-ngahn", english: "Need (Verb Intro)" },
+                    step2: { target: "Kailangan ko ng pera.", phonetic: "kah-ee-LAH-ngahn koh ng PEH-rah.", english: "I need money." },
+                    step3: { target: "Kailangan mo ba ng pera?", phonetic: "kah-ee-LAH-ngahn moh bah ng PEH-rah?", english: "Do you need money?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo kailangan ng pera?", phonetic: "sah-AHN moh kah-ee-LAH-ngahn ng PEH-rah?", english: "Where do you need money?" }
+                }
             },
             "5": {
-                step1: { target: "Gusto", phonetic: "GOOS-toh", english: "Want (Verb Intro)" },
-                step2: { target: "Gusto ko nito.", phonetic: "GOOS-toh koh nee-TOH.", english: "I want this. (Statement)" },
-                step3: { target: "Gusto mo ba nito?", phonetic: "GOOS-toh moh bah nee-TOH?", english: "Do you want this? (Yes/No Question)" },
-                step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan mo gusto nito?", phonetic: "sah-AHN moh GOOS-toh nee-TOH?", english: "Where do you want this put? (Open Question)" }
+                branches: ["Core Phrases", "Coffee", "Food", "Mango"],
+                "Core Phrases": {
+                    step1: { target: "Gusto", phonetic: "GOOS-toh", english: "Want (Verb Intro)" },
+                    step2: { target: "Gusto ko nito.", phonetic: "GOOS-toh koh nee-TOH.", english: "I want this." },
+                    step3: { target: "Gusto mo ba nito?", phonetic: "GOOS-toh moh bah nee-TOH?", english: "Do you want this?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo gusto nito?", phonetic: "sah-AHN moh GOOS-toh nee-TOH?", english: "Where do you want this put?" }
+                },
+                "Coffee": {
+                    step1: { target: "Gusto", phonetic: "GOOS-toh", english: "Want (Verb Intro)" },
+                    step2: { target: "Gusto ko ng kape.", phonetic: "GOOS-toh koh ng kah-PEH.", english: "I want to have coffee." },
+                    step3: { target: "Gusto mo ba ng kape?", phonetic: "GOOS-toh moh bah ng kah-PEH?", english: "Would you like some coffee?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo gusto ng kape?", phonetic: "sah-AHN moh GOOS-toh ng kah-PEH?", english: "Where do you want to have your coffee?" }
+                },
+                "Food": {
+                    step1: { target: "Gusto", phonetic: "GOOS-toh", english: "Want (Verb Intro)" },
+                    step2: { target: "Gusto ko ng pagkain.", phonetic: "GOOS-toh koh ng pahg-KAH-een.", english: "I want to eat food." },
+                    step3: { target: "Gusto mo ba ng pagkain?", phonetic: "GOOS-toh moh bah ng pahg-KAH-een?", english: "Would you like something to eat?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo gusto ng pagkain?", phonetic: "sah-AHN moh GOOS-toh ng pahg-KAH-een?", english: "Where do you want to eat your food?" }
+                },
+                "Mango": {
+                    step1: { target: "Gusto", phonetic: "GOOS-toh", english: "Want (Verb Intro)" },
+                    step2: { target: "Gusto ko ng mangga.", phonetic: "GOOS-toh koh ng MAHNG-gah.", english: "I want to eat a mango." },
+                    step3: { target: "Gusto mo ba ng mangga?", phonetic: "GOOS-toh moh bah ng MAHNG-gah?", english: "Would you like a mango?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan mo gusto ng mangga?", phonetic: "sah-AHN moh GOOS-toh ng MAHNG-gah?", english: "Where do you want me to put the mangoes?" }
+                }
             },
             "6": {
-                step1: { target: "Kumain", phonetic: "koo-MAH-een", english: "Eat (Verb Intro)" },
-                step2: { target: "Kumain ako doon.", phonetic: "koo-MAH-een ah-KOH dohn.", english: "I ate there. (Statement)" },
-                step3: { target: "Kumain ba ka doon?", phonetic: "koo-MAH-een bah kah dohn?", english: "Did you eat there? (Yes/No Question)" },
-                step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan ka kumain?", phonetic: "sah-AHN kah koo-MAH-een?", english: "Where did you eat? (Open Question)" }
+                branches: ["Core Phrases", "Soup", "Bread", "Rice"],
+                "Core Phrases": {
+                    step1: { target: "Kumain", phonetic: "koo-MAH-een", english: "Eat (Verb Intro)" },
+                    step2: { target: "Kumain ako doon.", phonetic: "koo-MAH-een ah-KOH dohn.", english: "I ate there." },
+                    step3: { target: "Kumain ba ka doon?", phonetic: "koo-MAH-een bah kah dohn?", english: "Did you eat there?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka kumain?", phonetic: "sah-AHN kah koo-MAH-een?", english: "Where did you eat?" }
+                },
+                "Soup": {
+                    step1: { target: "Kumain", phonetic: "koo-MAH-een", english: "Eat (Verb Intro)" },
+                    step2: { target: "Kumain ako sa sabaw.", phonetic: "koo-MAH-een ah-KOH sah sah-BAHW.", english: "I ate the soup." },
+                    step3: { target: "Kumain ba ka sa sabaw?", phonetic: "koo-MAH-een bah kah sah sah-BAHW?", english: "Did you eat the soup?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka kumain sa sabaw?", phonetic: "sah-AHN kah koo-MAH-een sah sah-BAHW?", english: "Where did you eat the soup?" }
+                },
+                "Bread": {
+                    step1: { target: "Kumain", phonetic: "koo-MAH-een", english: "Eat (Verb Intro)" },
+                    step2: { target: "Kumain ako sa tinapay.", phonetic: "koo-MAH-een ah-KOH sah tee-NAH-pah-ee.", english: "I ate the bread." },
+                    step3: { target: "Kumain ba ka sa tinapay?", phonetic: "koo-MAH-een bah kah sah tee-NAH-pah-ee?", english: "Did you eat the bread?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka kumain sa tinapay?", phonetic: "sah-AHN kah koo-MAH-een sah tee-NAH-pah-ee?", english: "Where did you eat the bread?" }
+                },
+                "Rice": {
+                    step1: { target: "Kumain", phonetic: "koo-MAH-een", english: "Eat (Verb Intro)" },
+                    step2: { target: "Kumain ako sa kanin.", phonetic: "koo-MAH-een ah-KOH sah KAH-neen.", english: "I ate the rice." },
+                    step3: { target: "Kumain ba ka sa kanin?", phonetic: "koo-MAH-een bah kah sah KAH-neen?", english: "Did you eat the rice?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka kumain sa kanin?", phonetic: "sah-AHN kah koo-MAH-een sah KAH-neen?", english: "Where did you eat the rice?" }
+                }
             },
             "7": {
-                step1: { target: "Nagtrabaho", phonetic: "nahg-trah-BAH-hoh", english: "Work (Verb Intro)" },
-                step2: { target: "Nagtrabaho ako doon.", phonetic: "nahg-trah-BAH-hoh ah-KOH dohn.", english: "I worked there. (Statement)" },
-                step3: { target: "Nagtrabaho ba ka doon?", phonetic: "nahg-trah-BAH-hoh bah kah dohn?", english: "Did you work there? (Yes/No Question)" },
-                step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan ka nagtrabaho?", phonetic: "sah-AHN kah nahg-trah-BAH-hoh?", english: "Where did you work? (Open Question)" }
+                branches: ["Core Phrases", "Hotel", "Factory", "School"],
+                "Core Phrases": {
+                    step1: { target: "Nagtrabaho", phonetic: "nahg-trah-BAH-hoh", english: "Work (Verb Intro)" },
+                    step2: { target: "Nagtrabaho ako doon.", phonetic: "nahg-trah-BAH-hoh ah-KOH dohn.", english: "I worked there." },
+                    step3: { target: "Nagtrabaho ba ka doon?", phonetic: "nahg-trah-BAH-hoh bah kah dohn?", english: "Did you work there." },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagtrabaho?", phonetic: "sah-AHN kah nahg-trah-BAH-hoh?", english: "Where did you work?" }
+                },
+                "Hotel": {
+                    step1: { target: "Nagtrabaho", phonetic: "nahg-trah-BAH-hoh", english: "Work (Verb Intro)" },
+                    step2: { target: "Nagtrabaho ako sa hotel.", phonetic: "nahg-trah-BAH-hoh ah-KOH sah oh-TEL.", english: "I worked at the hotel." },
+                    step3: { target: "Nagtrabaho ba ka sa hotel?", phonetic: "nahg-trah-BAH-hoh bah kah sah oh-TEL?", english: "Did you work at the hotel?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagtrabaho sa hotel?", phonetic: "sah-AHN kah nahg-trah-BAH-hoh sah oh-TEL?", english: "Where did you work at the hotel?" }
+                },
+                "Factory": {
+                    step1: { target: "Nagtrabaho", phonetic: "nahg-trah-BAH-hoh", english: "Work (Verb Intro)" },
+                    step2: { target: "Nagtrabaho ako sa pabrika.", phonetic: "nahg-trah-BAH-hoh ah-KOH sah PAH-bree-kah.", english: "I worked at the factory." },
+                    step3: { target: "Nagtrabaho ba ka sa pabrika?", phonetic: "nahg-trah-BAH-hoh bah kah sah PAH-bree-kah?", english: "Did you work at the factory?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagtrabaho sa pabrika?", phonetic: "sah-AHN kah nahg-trah-BAH-hoh sah PAH-bree-kah?", english: "Where did you work at the factory?" }
+                },
+                "School": {
+                    step1: { target: "Nagtrabaho", phonetic: "nahg-trah-BAH-hoh", english: "Work (Verb Intro)" },
+                    step2: { target: "Nagtrabaho ako sa paaralan.", phonetic: "nahg-trah-BAH-hoh ah-KOH sah pah-ah-RAH-lahn.", english: "I worked at the school." },
+                    step3: { target: "Nagtrabaho ba ka sa paaralan?", phonetic: "nahg-trah-BAH-hoh bah kah sah pah-ah-RAH-lahn?", english: "Did you work at the school?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka nagtrabaho sa paaralan?", phonetic: "sah-AHN kah nahg-trah-BAH-hoh sah pah-ah-RAH-lahn?", english: "Where did you work at the school?" }
+                }
             },
             "8": {
-                step1: { target: "Tumingin", phonetic: "too-MEENG-een", english: "Look (Verb Intro)" },
-                step2: { target: "Tumingin ako doon.", phonetic: "too-MEENG-een ah-KOH dohn.", english: "I looked there. (Statement)" },
-                step3: { target: "Tumingin ba ka doon?", phonetic: "too-MEENG-een bah kah dohn?", english: "Did you look there? (Yes/No Question)" },
-                step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
-                step5: { target: "Saan ka tumingin?", phonetic: "sah-AHN kah too-MEENG-een?", english: "Where did you look? (Open Question)" }
+                branches: ["Core Phrases", "Menu", "Map", "Sign"],
+                "Core Phrases": {
+                    step1: { target: "Tumingin", phonetic: "too-MEENG-een", english: "Look (Verb Intro)" },
+                    step2: { target: "Tumingin ako doon.", phonetic: "too-MEENG-een ah-KOH dohn.", english: "I looked there." },
+                    step3: { target: "Tumingin ba ka doon?", phonetic: "too-MEENG-een bah kah dohn?", english: "Did you look there?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka tumingin?", phonetic: "sah-AHN kah too-MEENG-een?", english: "Where did you look?" }
+                },
+                "Menu": {
+                    step1: { target: "Tumingin", phonetic: "too-MEENG-een", english: "Look (Verb Intro)" },
+                    step2: { target: "Tumingin ako sa menu.", phonetic: "too-MEENG-een ah-KOH sah MEH-nyoo.", english: "I looked at the menu." },
+                    step3: { target: "Tumingin ba ka sa menu?", phonetic: "too-MEENG-een bah kah sah MEH-nyoo?", english: "Did you look at the menu?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka tumingin sa menu?", phonetic: "sah-AHN kah too-MEENG-een sah MEH-nyoo?", english: "Where did you look on the menu?" }
+                },
+                "Map": {
+                    step1: { target: "Tumingin", phonetic: "too-MEENG-een", english: "Look (Verb Intro)" },
+                    step2: { target: "Tumingin ako sa mapa.", phonetic: "too-MEENG-een ah-KOH sah MAH-pah.", english: "I looked at the map." },
+                    step3: { target: "Tumingin ba ka sa mapa?", phonetic: "too-MEENG-een bah kah sah MAH-pah?", english: "Did you look at the map?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka tumingin sa mapa?", phonetic: "sah-AHN kah too-MEENG-een sah MAH-pah?", english: "Where did you look on the map?" }
+                },
+                "Sign": {
+                    step1: { target: "Tumingin", phonetic: "too-MEENG-een", english: "Look (Verb Intro)" },
+                    step2: { target: "Tumingin ako sa karatula.", phonetic: "too-MEENG-een ah-KOH sah kah-rah-TOO-lah.", english: "I looked at the sign." },
+                    step3: { target: "Tumingin ba ka sa karatula?", phonetic: "too-MEENG-een bah kah sah kah-rah-TOO-lah?", english: "Did you look at the sign?" },
+                    step4: { target: "Saan", phonetic: "sah-AHN", english: "Where (Question Word Intro)" },
+                    step5: { target: "Saan ka tumingin sa karatula?", phonetic: "sah-AHN kah too-MEENG-een sah kah-rah-TOO-lah?", english: "Where did you look on the sign?" }
+                }
             },
             "9": {
-                step1: { target: "Naiintindihan", phonetic: "nah-ee-een-teen-dee-HAHN", english: "Understand (Verb Intro)" },
-                step2: { target: "Naiintindihan ko ito.", phonetic: "nah-ee-een-teen-dee-HAHN koh ee-TOH.", english: "I understand this. (Statement)" },
-                step3: { target: "Naiintindihan mo ba ito?", phonetic: "nah-ee-een-teen-dee-HAHN moh bah ee-TOH?", english: "Do you understand this? (Yes/No Question)" },
-                step4: { target: "Paano", phonetic: "pah-AH-noh", english: "How (Question Word Intro)" },
-                step5: { target: "Paano mo naiintindihan ito?", phonetic: "pah-AH-noh moh nah-ee-een-teen-dee-HAHN ee-TOH?", english: "How do you understand this? (Open Question)" }
+                branches: ["Core Phrases", "Mystery", "Answer", "Truth"],
+                "Core Phrases": {
+                    step1: { target: "Naiintindihan", phonetic: "nah-ee-een-teen-dee-HAHN", english: "Understand (Verb Intro)" },
+                    step2: { target: "Naiintindihan ko ito.", phonetic: "nah-ee-een-teen-dee-HAHN koh ee-TOH.", english: "I understand this." },
+                    step3: { target: "Naiintindihan mo ba ito?", phonetic: "nah-ee-een-teen-dee-HAHN moh bah ee-TOH?", english: "Do you understand this?" },
+                    step4: { target: "Paano", phonetic: "pah-AH-noh", english: "How (Question Word Intro)" },
+                    step5: { target: "Paano mo naiintindihan ito?", phonetic: "pah-AH-noh moh nah-ee-een-teen-dee-HAHN ee-TOH?", english: "How do you understand this?" }
+                },
+                "Mystery": {
+                    step1: { target: "Naiintindihan", phonetic: "nah-ee-een-teen-dee-HAHN", english: "Understand (Verb Intro)" },
+                    step2: { target: "Naiintindihan ko ang misteryo.", phonetic: "nah-ee-een-teen-dee-HAHN koh ahng mees-TEHR-yoh.", english: "I understand the mystery." },
+                    step3: { target: "Naiintindihan mo ba ang misteryo?", phonetic: "nah-ee-een-teen-dee-HAHN moh bah ahng mees-TEHR-yoh?", english: "Do you understand the mystery?" },
+                    step4: { target: "Paano", phonetic: "pah-AH-noh", english: "How (Question Word Intro)" },
+                    step5: { target: "Paano mo naiintindihan ang misteryo?", phonetic: "pah-AH-noh moh nah-ee-een-teen-dee-HAHN ahng mees-TEHR-yoh?", english: "How do you understand the mystery?" }
+                },
+                "Answer": {
+                    step1: { target: "Naiintindihan", phonetic: "nah-ee-een-teen-dee-HAHN", english: "Understand (Verb Intro)" },
+                    step2: { target: "Naiintindihan ko ang sagot.", phonetic: "nah-ee-een-teen-dee-HAHN koh ahng sah-GOHT.", english: "I understand the answer." },
+                    step3: { target: "Naiintindihan mo ba ang sagot?", phonetic: "nah-ee-een-teen-dee-HAHN moh bah ahng sah-GOHT?", english: "Do you understand the answer?" },
+                    step4: { target: "Paano", phonetic: "pah-AH-noh", english: "How (Question Word Intro)" },
+                    step5: { target: "Paano mo naiintindihan ang sagot?", phonetic: "pah-AH-noh moh nah-ee-een-teen-dee-HAHN ahng sah-GOHT?", english: "How do you understand the answer?" }
+                },
+                "Truth": {
+                    step1: { target: "Naiintindihan", phonetic: "nah-ee-een-teen-dee-HAHN", english: "Understand (Verb Intro)" },
+                    step2: { target: "Naiintindihan ko ang katotohanan.", phonetic: "nah-ee-een-teen-dee-HAHN koh ahng kah-toh-toh-HAH-nahn.", english: "I understand the truth." },
+                    step3: { target: "Naiintindihan mo ba ang katotohanan?", phonetic: "nah-ee-een-teen-dee-HAHN moh bah ahng kah-toh-toh-HAH-nahn?", english: "Do you understand the truth?" },
+                    step4: { target: "Paano", phonetic: "pah-AH-noh", english: "How (Question Word Intro)" },
+                    step5: { target: "Paano mo naiintindihan ang katotohanan?", phonetic: "pah-AH-noh moh nah-ee-een-teen-dee-HAHN ahng kah-toh-toh-HAH-nahn.", english: "How do you understand the truth?" }
+                }
             },
             "10": {
-                step1: { target: "Tutulong / Tumulong", phonetic: "too-TOO-lohng / too-MOO-lohng", english: "Help (Verb Intro)" },
-                step2: { target: "Tutulong ako.", phonetic: "too-TOO-lohng ah-KOH.", english: "I will help. (Statement)" },
-                step3: { target: "Tutulong ba ka?", phonetic: "too-TOO-lohng bah kah?", english: "Will you help? (Yes/No Question)" },
-                step4: { target: "Tumulong", phonetic: "too-MOO-lohng", english: "Did Help (Past Word Intro)" },
-                step5: { target: "Tumulong ba ka?", phonetic: "too-MOO-lohng bah kah?", english: "Did you help? (Open Past Question)" }
+                branches: ["Core Phrases", "Neighbor", "Community", "Association"],
+                "Core Phrases": {
+                    step1: { target: "Tutulong", phonetic: "too-TOO-lohng", english: "Help (Future Verb Intro)" },
+                    step2: { target: "Tutulong ako.", phonetic: "too-TOO-lohng ah-KOH.", english: "I will help." },
+                    step3: { target: "Tutulong ba ka?", phonetic: "too-TOO-lohng bah kah?", english: "Will you help?" },
+                    step4: { target: "Tumulong", phonetic: "too-MOO-lohng", english: "Help (Past Verb Intro)" },
+                    step5: { target: "Tumulong ba ka?", phonetic: "too-MOO-lohng bah kah?", english: "Did you help?" }
+                },
+                "Neighbor": {
+                    step1: { target: "Tutulong", phonetic: "too-TOO-lohng", english: "Help (Future Verb Intro)" },
+                    step2: { target: "Tutulong ako sa kapitbahay.", phonetic: "too-TOO-lohng ah-KOH sah kah-peet-BAH-hahy.", english: "I will help the neighbor." },
+                    step3: { target: "Tutulong ba ka sa kapitbahay?", phonetic: "too-TOO-lohng bah kah sah kah-peet-BAH-hahy?", english: "Will you help the neighbor." },
+                    step4: { target: "Tumulong", phonetic: "too-MOO-lohng", english: "Help (Past Verb Intro)" },
+                    step5: { target: "Tumulong ba ka sa kapitbahay?", phonetic: "too-MOO-lohng bah kah sah kah-peet-BAH-hahy?", english: "Did you help the neighbor." }
+                },
+                "Community": {
+                    step1: { target: "Tutulong", phonetic: "too-TOO-lohng", english: "Help (Future Verb Intro)" },
+                    step2: { target: "Tutulong ako sa komunidad.", phonetic: "too-TOO-lohng ah-KOH sah koh-moo-nee-DAHD.", english: "I will help the community." },
+                    step3: { target: "Tutulong ba ka sa komunidad?", phonetic: "too-TOO-lohng bah kah sah koh-moo-nee-DAHD?", english: "Will you help the community." },
+                    step4: { target: "Tumulong", phonetic: "too-MOO-lohng", english: "Help (Past Verb Intro)" },
+                    step5: { target: "Tumulong ba ka sa komunidad?", phonetic: "too-MOO-lohng bah kah sah koh-moo-nee-DAHD?", english: "Did you help the community." }
+                },
+                "Association": {
+                    step1: { target: "Tutulong", phonetic: "too-TOO-lohng", english: "Help (Future Verb Intro)" },
+                    step2: { target: "Tutulong ako sa samahan.", phonetic: "too-TOO-lohng ah-KOH sah sah-MAH-hahn.", english: "I will help the association." },
+                    step3: { target: "Tutulong ba ka sa samahan?", phonetic: "too-TOO-lohng bah kah sah sah-MAH-hahn?", english: "Will you help the association." },
+                    step4: { target: "Tumulong", phonetic: "too-MOO-lohng", english: "Help (Past Verb Intro)" },
+                    step5: { target: "Tumulong ba ka sa samahan.", phonetic: "too-MOO-lohng bah kah sah sah-MAH-hahn.", english: "Did you help the association." }
+                }
             }
         };
 
         let currentLessonNum = "1";
+        let currentBranchKey = "Core Phrases";
         let activeStepKey = "step1";
         let currentRep = 1;
         const totalReps = 2;
@@ -162,27 +414,62 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = SpeechRecognition ? new SpeechRecognition() : null;
 
-        // Force complete label swap to use clean capital L structure matching your tracking
+        // Dynamic rebuild loop for branch dropdown options based on current lesson selection
+        function rebuildBranchDropdown() {
+            const lessonObj = multiLessonMatrix[currentLessonNum];
+            const picker = document.getElementById('branch-picker');
+            picker.innerHTML = ""; // Wipe past tracking clear
+            
+            lessonObj.branches.forEach(branch => {
+                const opt = document.createElement('option');
+                opt.value = branch;
+                opt.innerText = branch;
+                picker.appendChild(opt);
+            });
+            currentBranchKey = lessonObj.branches[0];
+        }
+
+        // Updates L-Branding configurations instantly inside buttons 
         function updateLayoutLabels() {
-            const currentLesson = lessonDatabase[currentLessonNum];
-            if (!currentLesson) return;
+            const lessonData = multiLessonMatrix[currentLessonNum];
+            if (!lessonData) return;
+            const targetBranch = lessonData[currentBranchKey];
+            if (!targetBranch) return;
 
             const pL = "L" + currentLessonNum;
-            document.getElementById('label-s1').innerText = `${pL} Intro`;
-            document.getElementById('label-s2').innerText = `${pL} Cup 1`;
-            document.getElementById('label-s3').innerText = `${pL} Cup 2`;
-            document.getElementById('label-s4').innerText = `${pL} Cup 3 In`;
-            document.getElementById('label-s5').innerText = `${pL} Cup 3`;
+            
+            // Custom adaptive labeling based on Lesson 10 differences
+            if (currentLessonNum === "10") {
+                document.getElementById('label-s1').innerText = `${pL} Fut Intro`;
+                document.getElementById('label-s2').innerText = `${pL} Fut Statement`;
+                document.getElementById('label-s3').innerText = `${pL} Fut Q`;
+                document.getElementById('label-s4').innerText = `${pL} Past Intro`;
+                document.getElementById('label-s5').innerText = `${pL} Past Q`;
+            } else {
+                document.getElementById('label-s1').innerText = `${pL} Intro`;
+                document.getElementById('label-s2').innerText = `${pL} Cup 1`;
+                document.getElementById('label-s3').innerText = `${pL} Cup 2`;
+                document.getElementById('label-s4').innerText = `${pL} Cup 3 In`;
+                document.getElementById('label-s5').innerText = `${pL} Cup 3`;
+            }
 
-            document.getElementById('preview-s1').innerText = currentLesson.step1.target;
-            document.getElementById('preview-s2').innerText = currentLesson.step2.target;
-            document.getElementById('preview-s3').innerText = currentLesson.step3.target;
-            document.getElementById('preview-s4').innerText = currentLesson.step4 ? currentLesson.step4.target : currentLesson.structure4.target;
-            document.getElementById('preview-s5').innerText = currentLesson.step5.target;
+            document.getElementById('preview-s1').innerText = targetBranch.step1.target;
+            document.getElementById('preview-s2').innerText = targetBranch.step2.target;
+            document.getElementById('preview-s3').innerText = targetBranch.step3.target;
+            document.getElementById('preview-s4').innerText = targetBranch.step4.target;
+            document.getElementById('preview-s5').innerText = targetBranch.step5.target;
         }
 
         function changeLesson(lessonNum) {
             currentLessonNum = lessonNum;
+            rebuildBranchDropdown();
+            updateLayoutLabels();
+            currentRep = 1;
+            runStepSequence();
+        }
+
+        function changeBranch(branchName) {
+            currentBranchKey = branchName;
             updateLayoutLabels();
             currentRep = 1;
             runStepSequence();
@@ -197,7 +484,7 @@
         async function speak(text) {
             return new Promise((resolve) => {
                 synth.cancel();
-                const cleanText = text.split('/')[0].trim();
+                const cleanText = text.split('/')[0].replace(/[.\?]/g, '').trim();
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 const voices = synth.getVoices();
                 const flVoice = voices.find(v => v.lang.includes('tl') || v.lang.includes('PH'));
@@ -210,9 +497,9 @@
         }
 
         async function runStepSequence() {
-            const lessonData = lessonDatabase[currentLessonNum];
-            let data = lessonData ? lessonData[activeStepKey] : null;
-            if (!data && activeStepKey === 'step4') data = lessonData.structure4; // Fix data fallbacks
+            const lessonObj = multiLessonMatrix[currentLessonNum];
+            const branchObj = lessonObj ? lessonObj[currentBranchKey] : null;
+            const data = branchObj ? branchObj[activeStepKey] : null;
             if (!data) return;
 
             document.getElementById('display-english').innerText = data.english;
@@ -266,6 +553,7 @@
         }
 
         window.onload = () => {
+            rebuildBranchDropdown();
             updateLayoutLabels();
         };
     </script>
